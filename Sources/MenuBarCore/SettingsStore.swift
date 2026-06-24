@@ -7,6 +7,8 @@ public final class SettingsStore {
         static let gitlabToken = "gitlabToken"
         static let jiraHost = "jiraHost"
         static let jiraToken = "jiraToken"
+        static let githubHost = "githubHost"
+        static let githubToken = "githubToken"
     }
     private static let seededFlag = "hasSeededFromFiles"
 
@@ -22,7 +24,9 @@ public final class SettingsStore {
             gitlabHost: secrets.string(forKey: Key.gitlabHost) ?? AppConfig.defaultGitLabHost,
             gitlabToken: secrets.string(forKey: Key.gitlabToken) ?? "",
             jiraHost: secrets.string(forKey: Key.jiraHost) ?? AppConfig.defaultJiraHost,
-            jiraToken: secrets.string(forKey: Key.jiraToken) ?? ""
+            jiraToken: secrets.string(forKey: Key.jiraToken) ?? "",
+            githubHost: secrets.string(forKey: Key.githubHost) ?? AppConfig.defaultGitHubHost,
+            githubToken: secrets.string(forKey: Key.githubToken) ?? ""
         )
     }
 
@@ -31,6 +35,8 @@ public final class SettingsStore {
         try secrets.set(newConfig.gitlabToken, forKey: Key.gitlabToken)
         try secrets.set(newConfig.jiraHost, forKey: Key.jiraHost)
         try secrets.set(newConfig.jiraToken, forKey: Key.jiraToken)
+        try secrets.set(newConfig.githubHost, forKey: Key.githubHost)
+        try secrets.set(newConfig.githubToken, forKey: Key.githubToken)
         config = newConfig
     }
 

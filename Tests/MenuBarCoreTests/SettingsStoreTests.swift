@@ -83,4 +83,30 @@ final class SettingsStoreTests: XCTestCase {
         XCTAssertEqual(store.config.gitlabToken, "EXISTING")
         XCTAssertEqual(store.config.jiraToken, "JT")
     }
+
+    func testGitHubFieldsRoundTripAndDefaults() throws {
+        let secrets = InMemorySecretStore()
+        let store = SettingsStore(secrets: secrets, defaults: freshDefaults(#function))
+        XCTAssertEqual(store.config.githubHost, AppConfig.defaultGitHubHost)
+        XCTAssertEqual(store.config.githubToken, "")
+        XCTAssertFalse(store.config.githubActive)
+
+        var c = store.config
+        c.githubToken = "ght"
+        try store.save(c)
+
+        let reloaded = SettingsStore(secrets: secrets, defaults: freshDefaults(#function + "2"))
+        XCTAssertEqual(reloaded.config.githubToken, "ght")
+        XCTAssertTrue(reloaded.config.githubActive)
+    }
+
+    func testHasAnySourceReflectsActiveSources() {
+        let store = SettingsStore(secrets: InMemorySecretStore(), defaults: freshDefaults(#function))
+        XCTAssertFalse(store.config.hasAnySource) // empty tokens
+        var c = store.config
+        c.jiraToken = "jt"
+        XCTAssertTrue(c.jiraActive)
+        XCTAssertTrue(c.hasAnySource)
+        XCTAssertFalse(c.gitlabActive)
+    }
 }
