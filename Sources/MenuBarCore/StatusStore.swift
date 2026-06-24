@@ -30,8 +30,8 @@ public final class StatusStore {
     public private(set) var lastRefresh: Date?
     public var onUpdate: (@MainActor () -> Void)?
 
-    private let gitlabClient: GitLabFetching
-    private let jiraClient: JiraFetching
+    private var gitlabClient: GitLabFetching
+    private var jiraClient: JiraFetching
     private let interval: TimeInterval
     private var timer: Timer?
     private var refreshTask: Task<Void, Never>?
@@ -40,6 +40,11 @@ public final class StatusStore {
         self.gitlabClient = gitlabClient
         self.jiraClient = jiraClient
         self.interval = interval
+    }
+
+    public func setClients(gitlabClient: GitLabFetching, jiraClient: JiraFetching) {
+        self.gitlabClient = gitlabClient
+        self.jiraClient = jiraClient
     }
 
     public func start() {

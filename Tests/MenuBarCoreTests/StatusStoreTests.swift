@@ -100,4 +100,22 @@ final class StatusStoreTests: XCTestCase {
         await store.refresh()
         XCTAssertGreaterThanOrEqual(updates, 1)
     }
+
+    @MainActor
+    func testSetClientsSwapsSourcesForNextRefresh() async {
+        let store = StatusStore(
+            gitlabClient: MutableGitLab(open: .success(1), ready: .success(0)),
+            jiraClient: MutableJira(backlog: .success(0), inProgress: .success(0))
+        )
+        await store.refresh()
+        XCTAssertEqual(store.gitlab.value, GitLabCounts(open: 1, ready: 0))
+
+        store.setClients(
+            gitlabClient: MutableGitLab(open: .success(9), ready: .success(4)),
+            jiraClient: MutableJira(backlog: .success(2), inProgress: .success(1))
+        )
+        await store.refresh()
+        XCTAssertEqual(store.gitlab.value, GitLabCounts(open: 9, ready: 4))
+        XCTAssertEqual(store.jira.value, JiraCounts(backlog: 2, inProgress: 1))
+    }
 }
