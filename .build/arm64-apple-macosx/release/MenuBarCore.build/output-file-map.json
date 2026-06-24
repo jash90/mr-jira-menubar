@@ -22,6 +22,12 @@
     "swift-dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/Credentials.swiftdeps",
     "diagnostics": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/Credentials.dia"
   },
+  "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/GitHubClient.swift": {
+    "object": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/GitHubClient.swift.o",
+    "swiftmodule": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/GitHubClient~partial.swiftmodule",
+    "swift-dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/GitHubClient.swiftdeps",
+    "diagnostics": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/GitHubClient.dia"
+  },
   "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/GitLabClient.swift": {
     "object": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/GitLabClient.swift.o",
     "swiftmodule": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/GitLabClient~partial.swiftmodule",

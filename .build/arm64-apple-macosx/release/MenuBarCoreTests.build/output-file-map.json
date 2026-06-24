@@ -16,6 +16,12 @@
     "swift-dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/CredentialsTests.swiftdeps",
     "diagnostics": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/CredentialsTests.dia"
   },
+  "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/GitHubClientTests.swift": {
+    "object": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/GitHubClientTests.swift.o",
+    "swiftmodule": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/GitHubClientTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/GitHubClientTests.swiftdeps",
+    "diagnostics": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/GitHubClientTests.dia"
+  },
   "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/GitLabClientTests.swift": {
     "object": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/GitLabClientTests.swift.o",
     "swiftmodule": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/GitLabClientTests~partial.swiftmodule",
