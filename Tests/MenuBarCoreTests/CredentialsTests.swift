@@ -32,4 +32,46 @@ final class CredentialsTests: XCTestCase {
         let creds = Credentials(glabConfigPath: "/nonexistent", jiraTokenPath: path)
         XCTAssertEqual(try creds.jiraToken(), "abc123")
     }
+
+    func testThrowsTokenMissingWhenHostBlockHasNoTokenLine() {
+        let yaml = """
+        hosts:
+            drm-gitlab.redlabs.pl:
+                api_host: drm-gitlab.redlabs.pl
+                user: bartlomiej.zimny
+        """
+        XCTAssertThrowsError(try Credentials.parseToken(host: "drm-gitlab.redlabs.pl", yaml: yaml, file: "/p/config.yml")) { error in
+            XCTAssertEqual(error as? CredentialsError, .tokenMissing("drm-gitlab.redlabs.pl", file: "/p/config.yml"))
+        }
+    }
+
+    func testThrowsTokenMissingWhenTokenValueIsEmpty() {
+        let yaml = """
+        hosts:
+            drm-gitlab.redlabs.pl:
+                token: ""
+                user: bartlomiej.zimny
+        """
+        XCTAssertThrowsError(try Credentials.parseToken(host: "drm-gitlab.redlabs.pl", yaml: yaml, file: "/p/config.yml")) { error in
+            XCTAssertEqual(error as? CredentialsError, .tokenMissing("drm-gitlab.redlabs.pl", file: "/p/config.yml"))
+        }
+    }
+
+    func testJiraTokenThrowsFileMissingWhenFileAbsent() {
+        let path = (NSTemporaryDirectory() as NSString).appendingPathComponent("jira-token-absent-\(UUID().uuidString)")
+        let creds = Credentials(glabConfigPath: "/nonexistent", jiraTokenPath: path)
+        XCTAssertThrowsError(try creds.jiraToken()) { error in
+            XCTAssertEqual(error as? CredentialsError, .fileMissing(path))
+        }
+    }
+
+    func testJiraTokenThrowsFileMissingWhenFileWhitespaceOnly() throws {
+        let path = (NSTemporaryDirectory() as NSString).appendingPathComponent("jira-token-blank-\(UUID().uuidString)")
+        try "   \n\t\n".write(toFile: path, atomically: true, encoding: .utf8)
+        defer { try? FileManager.default.removeItem(atPath: path) }
+        let creds = Credentials(glabConfigPath: "/nonexistent", jiraTokenPath: path)
+        XCTAssertThrowsError(try creds.jiraToken()) { error in
+            XCTAssertEqual(error as? CredentialsError, .fileMissing(path))
+        }
+    }
 }

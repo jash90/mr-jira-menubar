@@ -1,17 +1,28 @@
 import Foundation
 
-public protocol GitLabFetching {
+public protocol GitLabFetching: Sendable {
     func fetchOpenMRCount() async throws -> Int
     func fetchReadyToMergeCount() async throws -> Int
 }
 
-public enum GitLabError: Error, Equatable {
+public enum GitLabError: Error, Equatable, CustomStringConvertible {
     case badResponse
     case missingTotal
     case status(Int)
+
+    public var description: String {
+        switch self {
+        case .badResponse: return "GitLab: nieprawidłowa odpowiedź serwera"
+        case .missingTotal: return "GitLab: brak nagłówka X-Total"
+        case .status(let code):
+            return code == 401
+                ? "GitLab 401 — token wygasł lub został zmieniony"
+                : "GitLab HTTP \(code)"
+        }
+    }
 }
 
-public struct GitLabClient: GitLabFetching {
+public struct GitLabClient: GitLabFetching, Sendable {
     public let host: String
     let token: String
     let session: URLSession
@@ -77,9 +88,8 @@ public struct GitLabClient: GitLabFetching {
                 .init(name: "page", value: String(page)),
             ])
             let (data, response) = try await session.data(for: req)
-            guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
-                throw GitLabError.badResponse
-            }
+            guard let http = response as? HTTPURLResponse else { throw GitLabError.badResponse }
+            guard http.statusCode == 200 else { throw GitLabError.status(http.statusCode) }
             result.append(contentsOf: try JSONDecoder().decode([MRRef].self, from: data))
             guard let next = http.value(forHTTPHeaderField: "X-Next-Page"),
                   !next.isEmpty, let np = Int(next) else { break }
@@ -91,9 +101,8 @@ public struct GitLabClient: GitLabFetching {
     func isReady(_ mr: MRRef) async throws -> Bool {
         let req = request("/projects/\(mr.project_id)/merge_requests/\(mr.iid)/approvals", query: [])
         let (data, response) = try await session.data(for: req)
-        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
-            throw GitLabError.badResponse
-        }
+        guard let http = response as? HTTPURLResponse else { throw GitLabError.badResponse }
+        guard http.statusCode == 200 else { throw GitLabError.status(http.statusCode) }
         return try JSONDecoder().decode(Approvals.self, from: data).approved_by.count >= approvalThreshold
     }
 }

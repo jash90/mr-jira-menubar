@@ -1,15 +1,26 @@
 import Foundation
 
-public protocol JiraFetching {
+public protocol JiraFetching: Sendable {
     func backlogCount() async throws -> Int
     func inProgressCount() async throws -> Int
 }
 
-public enum JiraError: Error, Equatable {
+public enum JiraError: Error, Equatable, CustomStringConvertible {
     case badResponse
+    case status(Int)
+
+    public var description: String {
+        switch self {
+        case .badResponse: return "Jira: nieprawidłowa odpowiedź serwera"
+        case .status(let code):
+            return code == 401
+                ? "Jira 401 — token wygasł lub został zmieniony"
+                : "Jira HTTP \(code)"
+        }
+    }
 }
 
-public struct JiraClient: JiraFetching {
+public struct JiraClient: JiraFetching, Sendable {
     public static let backlogJQL =
         #"assignee = currentUser() AND resolution = Unresolved AND status in ("To Do", "Backlog")"#
     public static let inProgressJQL =
@@ -39,9 +50,8 @@ public struct JiraClient: JiraFetching {
         var req = URLRequest(url: comps.url!)
         req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         let (data, response) = try await session.data(for: req)
-        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
-            throw JiraError.badResponse
-        }
+        guard let http = response as? HTTPURLResponse else { throw JiraError.badResponse }
+        guard http.statusCode == 200 else { throw JiraError.status(http.statusCode) }
         return try JSONDecoder().decode(SearchResult.self, from: data).total
     }
 

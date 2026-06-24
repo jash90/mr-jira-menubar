@@ -22,4 +22,27 @@ final class JiraClientTests: XCTestCase {
             #"assignee = currentUser() AND resolution = Unresolved AND status in ("To Do", "Backlog")"#
         )
     }
+
+    func testInProgressJQLMatchesSpec() {
+        XCTAssertEqual(
+            JiraClient.inProgressJQL,
+            #"assignee = currentUser() AND resolution = Unresolved AND status = "In Progress""#
+        )
+    }
+
+    func testCountThrowsStatusOn401() async {
+        StubURLProtocol.handler = { _ in .init(statusCode: 401) }
+        let client = JiraClient(host: "jira.example", token: "tok", session: StubURLProtocol.session())
+        do {
+            _ = try await client.count(jql: "anything")
+            XCTFail("expected error")
+        } catch {
+            XCTAssertEqual(error as? JiraError, .status(401))
+        }
+    }
+
+    func testStatus401DescriptionMentionsToken() {
+        XCTAssertTrue(JiraError.status(401).description.contains("401"))
+        XCTAssertTrue(JiraError.status(401).description.lowercased().contains("token"))
+    }
 }

@@ -34,6 +34,7 @@ public final class StatusStore {
     private let jiraClient: JiraFetching
     private let interval: TimeInterval
     private var timer: Timer?
+    private var refreshTask: Task<Void, Never>?
 
     public init(gitlabClient: GitLabFetching, jiraClient: JiraFetching, interval: TimeInterval = 300) {
         self.gitlabClient = gitlabClient
@@ -49,7 +50,12 @@ public final class StatusStore {
     }
 
     public func refreshNow() {
-        Task { await refresh() }
+        guard refreshTask == nil else { return }
+
+        refreshTask = Task { [weak self] in
+            await self?.refresh()
+            self?.refreshTask = nil
+        }
     }
 
     public func refresh() async {
@@ -88,7 +94,11 @@ public final class StatusStore {
     }
 
     public static func message(_ error: Error) -> String {
-        if let e = error as? CustomStringConvertible { return e.description }
-        return error.localizedDescription
+        switch error {
+        case let e as CredentialsError: return e.description
+        case let e as GitLabError: return e.description
+        case let e as JiraError: return e.description
+        default: return error.localizedDescription
+        }
     }
 }
