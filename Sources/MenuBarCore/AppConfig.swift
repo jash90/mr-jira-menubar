@@ -7,6 +7,8 @@ public struct AppConfig: Equatable, Sendable {
     public var jiraToken: String
     public var githubHost: String
     public var githubToken: String
+    public var gitlabEnabled: Bool
+    public var githubEnabled: Bool
 
     public static let defaultGitLabHost = "drm-gitlab.redlabs.pl"
     public static let defaultJiraHost = "jira.redge.com"
@@ -18,7 +20,9 @@ public struct AppConfig: Equatable, Sendable {
         jiraHost: String = defaultJiraHost,
         jiraToken: String = "",
         githubHost: String = defaultGitHubHost,
-        githubToken: String = ""
+        githubToken: String = "",
+        gitlabEnabled: Bool = true,
+        githubEnabled: Bool = true
     ) {
         self.gitlabHost = gitlabHost
         self.gitlabToken = gitlabToken
@@ -26,11 +30,13 @@ public struct AppConfig: Equatable, Sendable {
         self.jiraToken = jiraToken
         self.githubHost = githubHost
         self.githubToken = githubToken
+        self.gitlabEnabled = gitlabEnabled
+        self.githubEnabled = githubEnabled
     }
 
-    public var gitlabActive: Bool { !gitlabHost.isEmpty && !gitlabToken.isEmpty }
+    public var gitlabActive: Bool { gitlabEnabled && !gitlabHost.isEmpty && !gitlabToken.isEmpty }
     public var jiraActive: Bool { !jiraHost.isEmpty && !jiraToken.isEmpty }
-    public var githubActive: Bool { !githubHost.isEmpty && !githubToken.isEmpty }
+    public var githubActive: Bool { githubEnabled && !githubHost.isEmpty && !githubToken.isEmpty }
     public var hasAnySource: Bool { gitlabActive || jiraActive || githubActive }
 
     public var isComplete: Bool {
