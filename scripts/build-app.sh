@@ -5,7 +5,7 @@ set -euo pipefail
 
 APP_NAME="MR Jira Menu Bar"
 EXECUTABLE="MRJiraMenuBar"
-BUNDLE_ID="com.redge.mrjiramenubar"
+BUNDLE_ID="com.raccoonsoftware.mrjiramenubar"
 VERSION="1.0.0"
 SHORT_VERSION="1.0"
 MIN_MACOS="13.0"

@@ -10,8 +10,8 @@ public struct AppConfig: Equatable, Sendable {
     public var gitlabEnabled: Bool
     public var githubEnabled: Bool
 
-    public static let defaultGitLabHost = "drm-gitlab.redlabs.pl"
-    public static let defaultJiraHost = "jira.redge.com"
+    public static let defaultGitLabHost = ""
+    public static let defaultJiraHost = ""
     public static let defaultGitHubHost = "api.github.com"
 
     public init(
@@ -42,9 +42,4 @@ public struct AppConfig: Equatable, Sendable {
     public var isComplete: Bool {
         !gitlabHost.isEmpty && !gitlabToken.isEmpty && !jiraHost.isEmpty && !jiraToken.isEmpty
     }
-}
-
-public protocol CredentialImporting {
-    func importedGitLabToken() throws -> String
-    func importedJiraToken() throws -> String
 }

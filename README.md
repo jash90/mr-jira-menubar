@@ -2,7 +2,7 @@
 
 A small macOS menu bar app showing four live counters at a glance:
 
-- **My open MRs** on `drm-gitlab.redlabs.pl`
+- **My open MRs** on your configured GitLab host
 - **My MRs ready to merge** — open MRs with ≥2 approvals
 - **Jira backlog** — issues assigned to me, unresolved, status `To Do` / `Backlog`
 - **Jira in progress** — issues assigned to me, unresolved, status `In Progress`
@@ -14,9 +14,7 @@ that open the GitLab MR dashboard and the matching Jira filters in your browser.
 
 - macOS 13+
 - Swift 5.9+ toolchain (Xcode)
-- Credentials read from existing files (no re-entry, in-memory only):
-  - GitLab token: `~/Library/Application Support/glab-cli/config.yml` (host `drm-gitlab.redlabs.pl`)
-  - Jira token: `~/.claude/.secrets/jira-token`
+- Hosts and tokens are entered in Settings and stored in the macOS Keychain.
 
 ## Build & run
 
@@ -43,7 +41,7 @@ swift test
 ## Layout
 
 - `Sources/MenuBarCore/` — Foundation-only, fully unit-tested logic
-  (`Credentials`, `GitLabClient`, `JiraClient`, `StatusStore`, `StatusFormatter`).
+  (`GitLabClient`, `JiraClient`, `StatusStore`, `StatusFormatter`).
 - `Sources/MRJiraMenuBar/` — AppKit executable (`NSStatusItem` UI wiring).
 - `docs/superpowers/` — design spec and implementation plan.
 

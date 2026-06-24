@@ -19,7 +19,7 @@ public enum KeychainError: Error, CustomStringConvertible {
 
 public final class KeychainSecretStore: SecretStore {
     private let service: String
-    public init(service: String = "com.redge.mrjiramenubar") { self.service = service }
+    public init(service: String = "com.raccoonsoftware.mrjiramenubar") { self.service = service }
 
     public func string(forKey key: String) -> String? {
         let query: [String: Any] = [

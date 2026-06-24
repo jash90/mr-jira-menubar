@@ -14,8 +14,6 @@ public final class SettingsStore {
         static let gitlabEnabled = "gitlabEnabled"
         static let githubEnabled = "githubEnabled"
     }
-    private static let seededFlag = "hasSeededFromFiles"
-
     private static func loadBool(_ defaults: UserDefaults, _ key: String, default fallback: Bool) -> Bool {
         defaults.object(forKey: key) == nil ? fallback : defaults.bool(forKey: key)
     }
@@ -50,28 +48,5 @@ public final class SettingsStore {
         defaults.set(newConfig.gitlabEnabled, forKey: Flag.gitlabEnabled)
         defaults.set(newConfig.githubEnabled, forKey: Flag.githubEnabled)
         config = newConfig
-    }
-
-    @discardableResult
-    public func seedFromFilesIfNeeded(importer: CredentialImporting = Credentials()) -> Bool {
-        guard !defaults.bool(forKey: Self.seededFlag) else { return false }
-        defaults.set(true, forKey: Self.seededFlag)
-
-        var updated = config
-        var changed = false
-
-        if updated.gitlabToken.isEmpty, let token = try? importer.importedGitLabToken() {
-            updated.gitlabToken = token
-            changed = true
-        }
-
-        if updated.jiraToken.isEmpty, let token = try? importer.importedJiraToken() {
-            updated.jiraToken = token
-            changed = true
-        }
-
-        if changed { try? save(updated) }
-
-        return changed
     }
 }

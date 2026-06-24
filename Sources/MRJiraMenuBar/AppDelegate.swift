@@ -14,8 +14,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        settings.seedFromFilesIfNeeded()
-
         store = StatusStore()
         store.onUpdate = { [weak self] in
             guard let self else { return }

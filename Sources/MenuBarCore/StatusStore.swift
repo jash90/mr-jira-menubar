@@ -179,7 +179,6 @@ public final class StatusStore {
 
     public static func message(_ error: Error) -> String {
         switch error {
-        case let e as CredentialsError: return e.description
         case let e as GitLabError: return e.description
         case let e as JiraError: return e.description
         case let e as GitHubError: return e.description
