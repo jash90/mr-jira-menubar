@@ -10,7 +10,15 @@ public final class SettingsStore {
         static let githubHost = "githubHost"
         static let githubToken = "githubToken"
     }
+    private enum Flag {
+        static let gitlabEnabled = "gitlabEnabled"
+        static let githubEnabled = "githubEnabled"
+    }
     private static let seededFlag = "hasSeededFromFiles"
+
+    private static func loadBool(_ defaults: UserDefaults, _ key: String, default fallback: Bool) -> Bool {
+        defaults.object(forKey: key) == nil ? fallback : defaults.bool(forKey: key)
+    }
 
     private let secrets: SecretStore
     private let defaults: UserDefaults
@@ -26,7 +34,9 @@ public final class SettingsStore {
             jiraHost: secrets.string(forKey: Key.jiraHost) ?? AppConfig.defaultJiraHost,
             jiraToken: secrets.string(forKey: Key.jiraToken) ?? "",
             githubHost: secrets.string(forKey: Key.githubHost) ?? AppConfig.defaultGitHubHost,
-            githubToken: secrets.string(forKey: Key.githubToken) ?? ""
+            githubToken: secrets.string(forKey: Key.githubToken) ?? "",
+            gitlabEnabled: Self.loadBool(defaults, Flag.gitlabEnabled, default: true),
+            githubEnabled: Self.loadBool(defaults, Flag.githubEnabled, default: true)
         )
     }
 
@@ -37,6 +47,8 @@ public final class SettingsStore {
         try secrets.set(newConfig.jiraToken, forKey: Key.jiraToken)
         try secrets.set(newConfig.githubHost, forKey: Key.githubHost)
         try secrets.set(newConfig.githubToken, forKey: Key.githubToken)
+        defaults.set(newConfig.gitlabEnabled, forKey: Flag.gitlabEnabled)
+        defaults.set(newConfig.githubEnabled, forKey: Flag.githubEnabled)
         config = newConfig
     }
 

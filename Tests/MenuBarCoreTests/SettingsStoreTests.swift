@@ -109,4 +109,30 @@ final class SettingsStoreTests: XCTestCase {
         XCTAssertTrue(c.hasAnySource)
         XCTAssertFalse(c.gitlabActive)
     }
+
+    func testDisabledSourceIsNotActiveEvenWithToken() {
+        var c = AppConfig(gitlabHost: "gl", gitlabToken: "gt", githubHost: "api.github.com", githubToken: "ght")
+        XCTAssertTrue(c.gitlabActive)
+        XCTAssertTrue(c.githubActive)
+        c.gitlabEnabled = false
+        c.githubEnabled = false
+        XCTAssertFalse(c.gitlabActive)
+        XCTAssertFalse(c.githubActive)
+    }
+
+    func testEnabledFlagsDefaultTrueAndPersist() throws {
+        let secrets = InMemorySecretStore()
+        let defaults = freshDefaults(#function)
+        let store = SettingsStore(secrets: secrets, defaults: defaults)
+        XCTAssertTrue(store.config.gitlabEnabled)
+        XCTAssertTrue(store.config.githubEnabled)
+
+        var c = store.config
+        c.gitlabEnabled = false
+        try store.save(c)
+
+        let reloaded = SettingsStore(secrets: secrets, defaults: defaults)
+        XCTAssertFalse(reloaded.config.gitlabEnabled)
+        XCTAssertTrue(reloaded.config.githubEnabled)
+    }
 }
