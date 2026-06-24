@@ -80,3 +80,8 @@ public struct Credentials {
         throw CredentialsError.hostMissing(host, file: file)
     }
 }
+
+extension Credentials: CredentialImporting {
+    public func importedGitLabToken() throws -> String { try gitlabToken() }
+    public func importedJiraToken() throws -> String { try jiraToken() }
+}
