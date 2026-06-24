@@ -44,6 +44,31 @@ private final class MutableJira: JiraFetching, @unchecked Sendable {
 
 private enum TestError: Error { case boom }
 
+private actor Gate {
+    private var continuation: CheckedContinuation<Void, Never>?
+    private var isOpen = false
+
+    func wait() async {
+        if isOpen { return }
+
+        await withCheckedContinuation { continuation = $0 }
+    }
+
+    func open() {
+        isOpen = true
+        continuation?.resume()
+        continuation = nil
+    }
+}
+
+private final class GatedGitLab: GitLabFetching, @unchecked Sendable {
+    let gate: Gate
+    let value: Int
+    init(gate: Gate, value: Int) { self.gate = gate; self.value = value }
+    func fetchOpenMRCount() async throws -> Int { await gate.wait(); return value }
+    func fetchReadyToMergeCount() async throws -> Int { await gate.wait(); return value }
+}
+
 final class StatusStoreTests: XCTestCase {
     @MainActor
     func testSuccessPopulatesBothSources() async {
@@ -116,6 +141,37 @@ final class StatusStoreTests: XCTestCase {
         )
         await store.refresh()
         XCTAssertEqual(store.gitlab.value, GitLabCounts(open: 9, ready: 4))
+        XCTAssertEqual(store.jira.value, JiraCounts(backlog: 2, inProgress: 1))
+    }
+
+    @MainActor
+    func testRestartRefreshAppliesSwappedClientsWhileRefreshInFlight() async {
+        let staleGate = Gate()
+        let store = StatusStore(
+            gitlabClient: GatedGitLab(gate: staleGate, value: 1),
+            jiraClient: MutableJira(backlog: .success(0), inProgress: .success(0))
+        )
+
+        store.refreshNow()
+        XCTAssertNil(store.gitlab.value)
+
+        let freshGate = Gate()
+        await freshGate.open()
+        store.setClients(
+            gitlabClient: GatedGitLab(gate: freshGate, value: 9),
+            jiraClient: MutableJira(backlog: .success(2), inProgress: .success(1))
+        )
+        store.restartRefresh()
+
+        await staleGate.open()
+
+        for _ in 0..<200 {
+            if store.gitlab.value == GitLabCounts(open: 9, ready: 9) { break }
+
+            try? await Task.sleep(nanoseconds: 5_000_000)
+        }
+
+        XCTAssertEqual(store.gitlab.value, GitLabCounts(open: 9, ready: 9))
         XCTAssertEqual(store.jira.value, JiraCounts(backlog: 2, inProgress: 1))
     }
 }

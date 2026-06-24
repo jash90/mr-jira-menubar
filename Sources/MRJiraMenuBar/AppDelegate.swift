@@ -40,12 +40,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         controller.onOpenSettings = { [weak self] in self?.openSettings() }
         settingsWindow.onSave = { [weak self] newConfig in
             guard let self else { return }
-            try? self.settings.save(newConfig)
+
+            try self.settings.save(newConfig)
             self.applyConfig()
         }
 
         applyConfig()
-        store.start()
     }
 
     private func applyConfig() {
@@ -54,6 +54,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         controller.jiraHost = config.jiraHost
 
         guard config.isComplete else {
+            store.stop()
+            store.setClients(
+                gitlabClient: FailingGitLab(error: AppError.notConfigured),
+                jiraClient: FailingJira(error: AppError.notConfigured)
+            )
             controller.showNeedsConfig()
             openSettings()
             return
@@ -61,7 +66,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         let (gitlab, jira) = ClientFactory.make(config)
         store.setClients(gitlabClient: gitlab, jiraClient: jira)
-        store.refreshNow()
+        controller.markConfigured()
+        store.scheduleTimer()
+        store.restartRefresh()
     }
 
     private func openSettings() {

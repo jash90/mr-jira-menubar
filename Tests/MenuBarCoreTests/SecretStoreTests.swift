@@ -14,4 +14,12 @@ final class SecretStoreTests: XCTestCase {
         try store.set(nil, forKey: "k")
         XCTAssertNil(store.string(forKey: "k"))
     }
+
+    func testInMemoryStoresEmptyStringDistinctFromNil() throws {
+        let store = InMemorySecretStore()
+        try store.set("", forKey: "k")
+        XCTAssertEqual(store.string(forKey: "k"), "")
+        try store.set(nil, forKey: "k")
+        XCTAssertNil(store.string(forKey: "k"))
+    }
 }

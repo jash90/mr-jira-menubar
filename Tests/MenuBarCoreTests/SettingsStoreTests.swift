@@ -57,4 +57,30 @@ final class SettingsStoreTests: XCTestCase {
         XCTAssertFalse(store.seedFromFilesIfNeeded(importer: importer))
         XCTAssertEqual(store.config.gitlabToken, "")
     }
+
+    func testSeedDoesNotReseedAfterFirstAttemptEvenWhenFilesAppear() {
+        let secrets = InMemorySecretStore()
+        let defaults = freshDefaults(#function)
+        let store = SettingsStore(secrets: secrets, defaults: defaults)
+
+        let missing = StubImporter(gitlab: .failure(StubError.missing), jira: .failure(StubError.missing))
+        XCTAssertFalse(store.seedFromFilesIfNeeded(importer: missing))
+
+        let present = StubImporter(gitlab: .success("GT"), jira: .success("JT"))
+        let reopened = SettingsStore(secrets: secrets, defaults: defaults)
+        XCTAssertFalse(reopened.seedFromFilesIfNeeded(importer: present))
+        XCTAssertEqual(reopened.config.gitlabToken, "")
+        XCTAssertEqual(reopened.config.jiraToken, "")
+    }
+
+    func testSeedFillsOnlyEmptyTokens() throws {
+        let secrets = InMemorySecretStore()
+        let store = SettingsStore(secrets: secrets, defaults: freshDefaults(#function))
+        try store.save(AppConfig(gitlabHost: "gl", gitlabToken: "EXISTING", jiraHost: "jr", jiraToken: ""))
+
+        let importer = StubImporter(gitlab: .success("FROM_FILE"), jira: .success("JT"))
+        XCTAssertTrue(store.seedFromFilesIfNeeded(importer: importer))
+        XCTAssertEqual(store.config.gitlabToken, "EXISTING")
+        XCTAssertEqual(store.config.jiraToken, "JT")
+    }
 }

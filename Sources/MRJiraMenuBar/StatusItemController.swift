@@ -1,12 +1,14 @@
 import AppKit
 import MenuBarCore
 
+@MainActor
 final class StatusItemController: NSObject {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     var onRefresh: (() -> Void)?
     var onOpenSettings: (() -> Void)?
     var gitlabHost = AppConfig.defaultGitLabHost
     var jiraHost = AppConfig.defaultJiraHost
+    private var isNeedsConfig = false
 
     private var mrDashboardURL: URL {
         URL(string: "https://\(gitlabHost)/dashboard/merge_requests?scope=created_by_me&state=opened")!
@@ -21,8 +23,13 @@ final class StatusItemController: NSObject {
         return comps.url!
     }
 
+    func markConfigured() {
+        isNeedsConfig = false
+    }
+
     func update(gitlab: SourceResult<GitLabCounts>, jira: SourceResult<JiraCounts>, lastRefresh: Date?) {
-        guard let button = statusItem.button else { return }
+        guard !isNeedsConfig, let button = statusItem.button else { return }
+
         button.attributedTitle = Self.attributedTitle(StatusFormatter.segments(gitlab: gitlab, jira: jira))
         button.toolTip = StatusFormatter.tooltip(gitlab: gitlab, jira: jira, lastRefresh: lastRefresh)
         statusItem.menu = buildMenu(gitlab: gitlab, jira: jira, lastRefresh: lastRefresh)
@@ -109,7 +116,10 @@ final class StatusItemController: NSObject {
     }
 
     func showNeedsConfig() {
+        isNeedsConfig = true
+
         guard let button = statusItem.button else { return }
+
         let attachment = NSTextAttachment()
         attachment.image = NSImage(systemSymbolName: "gearshape", accessibilityDescription: nil)
         button.attributedTitle = NSAttributedString(attachment: attachment)

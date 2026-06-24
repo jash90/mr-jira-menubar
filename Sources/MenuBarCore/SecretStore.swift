@@ -41,14 +41,34 @@ public final class KeychainSecretStore: SecretStore {
             kSecAttrService as String: service,
             kSecAttrAccount as String: key,
         ]
-        SecItemDelete(base as CFDictionary)
 
-        guard let value, let data = value.data(using: .utf8) else { return }
+        guard let value, let data = value.data(using: .utf8) else {
+            let status = SecItemDelete(base as CFDictionary)
+
+            guard status == errSecSuccess || status == errSecItemNotFound else {
+                throw KeychainError.unexpectedStatus(status)
+            }
+
+            return
+        }
+
+        let updateStatus = SecItemUpdate(
+            base as CFDictionary,
+            [kSecValueData as String: data] as CFDictionary
+        )
+
+        if updateStatus == errSecSuccess { return }
+
+        guard updateStatus == errSecItemNotFound else {
+            throw KeychainError.unexpectedStatus(updateStatus)
+        }
 
         var add = base
         add[kSecValueData as String] = data
-        let status = SecItemAdd(add as CFDictionary, nil)
-        guard status == errSecSuccess else { throw KeychainError.unexpectedStatus(status) }
+        add[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+        let addStatus = SecItemAdd(add as CFDictionary, nil)
+
+        guard addStatus == errSecSuccess else { throw KeychainError.unexpectedStatus(addStatus) }
     }
 }
 
