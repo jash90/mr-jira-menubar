@@ -1,0 +1,3 @@
+module MenuBarCore {
+    header "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/include/MenuBarCore-Swift.h"
+}

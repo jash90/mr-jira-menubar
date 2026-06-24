@@ -1,0 +1,26 @@
+{
+  "": {
+    "swift-dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/primary.swiftdeps"
+  },
+  "/Users/redge/Projects/mr-jira-menubar/Sources/MRJiraMenuBar/AppDelegate.swift": {
+    "dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/AppDelegate.d",
+    "object": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/AppDelegate.swift.o",
+    "swiftmodule": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/AppDelegate~partial.swiftmodule",
+    "swift-dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/AppDelegate.swiftdeps",
+    "diagnostics": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/AppDelegate.dia"
+  },
+  "/Users/redge/Projects/mr-jira-menubar/Sources/MRJiraMenuBar/StatusItemController.swift": {
+    "dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/StatusItemController.d",
+    "object": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/StatusItemController.swift.o",
+    "swiftmodule": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/StatusItemController~partial.swiftmodule",
+    "swift-dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/StatusItemController.swiftdeps",
+    "diagnostics": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/StatusItemController.dia"
+  },
+  "/Users/redge/Projects/mr-jira-menubar/Sources/MRJiraMenuBar/main.swift": {
+    "dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/main.d",
+    "object": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/main.swift.o",
+    "swiftmodule": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/main~partial.swiftmodule",
+    "swift-dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/main.swiftdeps",
+    "diagnostics": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/main.dia"
+  }
+}

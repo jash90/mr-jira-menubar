@@ -1,0 +1,37 @@
+{
+  "": {
+    "dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/MenuBarCore.d",
+    "object": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/MenuBarCore.o",
+    "swift-dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/primary.swiftdeps"
+  },
+  "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/Credentials.swift": {
+    "object": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/Credentials.swift.o",
+    "swiftmodule": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/Credentials~partial.swiftmodule",
+    "swift-dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/Credentials.swiftdeps",
+    "diagnostics": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/Credentials.dia"
+  },
+  "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/GitLabClient.swift": {
+    "object": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/GitLabClient.swift.o",
+    "swiftmodule": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/GitLabClient~partial.swiftmodule",
+    "swift-dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/GitLabClient.swiftdeps",
+    "diagnostics": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/GitLabClient.dia"
+  },
+  "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/JiraClient.swift": {
+    "object": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/JiraClient.swift.o",
+    "swiftmodule": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/JiraClient~partial.swiftmodule",
+    "swift-dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/JiraClient.swiftdeps",
+    "diagnostics": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/JiraClient.dia"
+  },
+  "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/StatusFormatter.swift": {
+    "object": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/StatusFormatter.swift.o",
+    "swiftmodule": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/StatusFormatter~partial.swiftmodule",
+    "swift-dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/StatusFormatter.swiftdeps",
+    "diagnostics": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/StatusFormatter.dia"
+  },
+  "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/StatusStore.swift": {
+    "object": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/StatusStore.swift.o",
+    "swiftmodule": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/StatusStore~partial.swiftmodule",
+    "swift-dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/StatusStore.swiftdeps",
+    "diagnostics": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCore.build/StatusStore.dia"
+  }
+}
