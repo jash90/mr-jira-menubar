@@ -43,7 +43,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let config = settings.config
         controller.gitlabHost = config.gitlabHost
         controller.jiraHost = config.jiraHost
-        controller.githubWebHost = config.githubHost == "api.github.com" ? "github.com" : config.githubHost
+        let githubAPIHost = GitHubClient.normalizeHost(config.githubHost)
+        controller.githubWebHost = githubAPIHost == "api.github.com" ? "github.com" : githubAPIHost
 
         guard config.hasAnySource else {
             store.stop()

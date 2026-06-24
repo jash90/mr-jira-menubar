@@ -30,7 +30,7 @@ public struct GitHubClient: GitHubFetching, Sendable {
         self.session = session
     }
 
-    static func normalizeHost(_ raw: String) -> String {
+    public static func normalizeHost(_ raw: String) -> String {
         let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
         let withoutScheme = trimmed
             .replacingOccurrences(of: "https://", with: "")

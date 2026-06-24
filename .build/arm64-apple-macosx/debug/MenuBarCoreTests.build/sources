@@ -1,5 +1,6 @@
 /Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/ClientFactoryTests.swift
 /Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/CredentialsTests.swift
+/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/GitHubClientTests.swift
 /Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/GitLabClientTests.swift
 /Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/JiraClientTests.swift
 /Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/SecretStoreTests.swift

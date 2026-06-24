@@ -270,6 +270,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/GitHubClient.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/GitLabClient.swift"
         },
         {
@@ -308,6 +312,7 @@
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/AppConfig.swift.o",
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/ClientFactory.swift.o",
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/Credentials.swift.o",
+        "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/GitHubClient.swift.o",
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/GitLabClient.swift.o",
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/JiraClient.swift.o",
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/SecretStore.swift.o",
@@ -380,6 +385,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/GitHubClient.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/GitLabClient.swift.o"
         },
         {
@@ -412,6 +421,7 @@
         "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/AppConfig.swift",
         "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/ClientFactory.swift",
         "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/Credentials.swift",
+        "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/GitHubClient.swift",
         "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/GitLabClient.swift",
         "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/JiraClient.swift",
         "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/SecretStore.swift",
@@ -434,6 +444,10 @@
         {
           "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/CredentialsTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/GitHubClientTests.swift"
         },
         {
           "kind" : "file",
@@ -482,6 +496,7 @@
       "objects" : [
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/ClientFactoryTests.swift.o",
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/CredentialsTests.swift.o",
+        "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/GitHubClientTests.swift.o",
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/GitLabClientTests.swift.o",
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/JiraClientTests.swift.o",
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/SecretStoreTests.swift.o",
@@ -550,6 +565,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/GitHubClientTests.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/GitLabClientTests.swift.o"
         },
         {
@@ -585,6 +604,7 @@
       "sources" : [
         "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/ClientFactoryTests.swift",
         "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/CredentialsTests.swift",
+        "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/GitHubClientTests.swift",
         "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/GitLabClientTests.swift",
         "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/JiraClientTests.swift",
         "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/SecretStoreTests.swift",
@@ -735,6 +755,7 @@
       "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/AppConfig.swift",
       "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/ClientFactory.swift",
       "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/Credentials.swift",
+      "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/GitHubClient.swift",
       "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/GitLabClient.swift",
       "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/JiraClient.swift",
       "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/SecretStore.swift",
@@ -802,6 +823,7 @@
       "-c",
       "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/ClientFactoryTests.swift",
       "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/CredentialsTests.swift",
+      "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/GitHubClientTests.swift",
       "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/GitLabClientTests.swift",
       "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/JiraClientTests.swift",
       "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/SecretStoreTests.swift",
@@ -983,6 +1005,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/GitHubClient.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/GitLabClient.swift.o"
         },
         {
@@ -1047,6 +1073,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/GitHubClient.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/GitLabClient.swift.o"
         },
         {
@@ -1076,6 +1106,10 @@
         {
           "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/CredentialsTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/GitHubClientTests.swift.o"
         },
         {
           "kind" : "file",
@@ -1129,6 +1163,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/GitHubClient.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/GitLabClient.swift"
         },
         {
@@ -1168,6 +1206,10 @@
         {
           "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/CredentialsTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/GitHubClientTests.swift"
         },
         {
           "kind" : "file",
