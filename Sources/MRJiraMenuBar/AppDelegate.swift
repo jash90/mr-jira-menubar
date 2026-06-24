@@ -13,35 +13,58 @@ private struct FailingJira: JiraFetching {
     func inProgressCount() async throws -> Int { throw error }
 }
 
+private enum AppError: Error, CustomStringConvertible {
+    case notConfigured
+    var description: String { "Brak konfiguracji" }
+}
+
+@MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    private var store: StatusStore?
+    private let settings = SettingsStore(secrets: KeychainSecretStore())
     private let controller = StatusItemController()
+    private let settingsWindow = SettingsWindowController()
+    private var store: StatusStore!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        let creds = Credentials()
+        settings.seedFromFilesIfNeeded()
 
-        let gitlab: GitLabFetching
-        do {
-            gitlab = GitLabClient(host: "drm-gitlab.redlabs.pl", token: try creds.gitlabToken())
-        } catch {
-            gitlab = FailingGitLab(error: error)
+        store = StatusStore(
+            gitlabClient: FailingGitLab(error: AppError.notConfigured),
+            jiraClient: FailingJira(error: AppError.notConfigured)
+        )
+        store.onUpdate = { [weak self] in
+            guard let self else { return }
+            self.controller.update(gitlab: self.store.gitlab, jira: self.store.jira, lastRefresh: self.store.lastRefresh)
+        }
+        controller.onRefresh = { [weak self] in self?.store.refreshNow() }
+        controller.onOpenSettings = { [weak self] in self?.openSettings() }
+        settingsWindow.onSave = { [weak self] newConfig in
+            guard let self else { return }
+            try? self.settings.save(newConfig)
+            self.applyConfig()
         }
 
-        let jira: JiraFetching
-        do {
-            jira = JiraClient(host: "jira.redge.com", token: try creds.jiraToken())
-        } catch {
-            jira = FailingJira(error: error)
-        }
-
-        let store = StatusStore(gitlabClient: gitlab, jiraClient: jira)
-        self.store = store
-
-        controller.onRefresh = { [weak store] in store?.refreshNow() }
-        store.onUpdate = { [weak self, weak store] in
-            guard let self, let store else { return }
-            self.controller.update(gitlab: store.gitlab, jira: store.jira, lastRefresh: store.lastRefresh)
-        }
+        applyConfig()
         store.start()
+    }
+
+    private func applyConfig() {
+        let config = settings.config
+        controller.gitlabHost = config.gitlabHost
+        controller.jiraHost = config.jiraHost
+
+        guard config.isComplete else {
+            controller.showNeedsConfig()
+            openSettings()
+            return
+        }
+
+        let (gitlab, jira) = ClientFactory.make(config)
+        store.setClients(gitlabClient: gitlab, jiraClient: jira)
+        store.refreshNow()
+    }
+
+    private func openSettings() {
+        settingsWindow.show(config: settings.config)
     }
 }

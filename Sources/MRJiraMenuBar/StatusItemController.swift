@@ -4,9 +4,22 @@ import MenuBarCore
 final class StatusItemController: NSObject {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     var onRefresh: (() -> Void)?
+    var onOpenSettings: (() -> Void)?
+    var gitlabHost = AppConfig.defaultGitLabHost
+    var jiraHost = AppConfig.defaultJiraHost
 
-    private let mrDashboardURL = URL(string:
-        "https://drm-gitlab.redlabs.pl/dashboard/merge_requests?scope=created_by_me&state=opened")!
+    private var mrDashboardURL: URL {
+        URL(string: "https://\(gitlabHost)/dashboard/merge_requests?scope=created_by_me&state=opened")!
+    }
+
+    private func jiraURL(_ jql: String) -> URL {
+        var comps = URLComponents()
+        comps.scheme = "https"
+        comps.host = jiraHost
+        comps.path = "/issues/"
+        comps.queryItems = [.init(name: "jql", value: jql)]
+        return comps.url!
+    }
 
     func update(gitlab: SourceResult<GitLabCounts>, jira: SourceResult<JiraCounts>, lastRefresh: Date?) {
         guard let button = statusItem.button else { return }
@@ -60,8 +73,8 @@ final class StatusItemController: NSObject {
         menu.addItem(header("Jira"))
         let backlogText = jira.value.map { String($0.backlog) } ?? (jira.error != nil ? "—" : "…")
         let progText = jira.value.map { String($0.inProgress) } ?? (jira.error != nil ? "—" : "…")
-        menu.addItem(link("  Backlog: \(backlogText)", url: Self.jiraURL(JiraClient.backlogJQL)))
-        menu.addItem(link("  W toku: \(progText)", url: Self.jiraURL(JiraClient.inProgressJQL)))
+        menu.addItem(link("  Backlog: \(backlogText)", url: jiraURL(JiraClient.backlogJQL)))
+        menu.addItem(link("  W toku: \(progText)", url: jiraURL(JiraClient.inProgressJQL)))
         if let e = jira.error { menu.addItem(NSMenuItem(title: "  Błąd: \(e)", action: nil, keyEquivalent: "")) }
 
         menu.addItem(.separator())
@@ -72,6 +85,9 @@ final class StatusItemController: NSObject {
         let refreshItem = NSMenuItem(title: "Odśwież teraz", action: #selector(refresh), keyEquivalent: "r")
         refreshItem.target = self
         menu.addItem(refreshItem)
+        let settingsItem = NSMenuItem(title: "Ustawienia…", action: #selector(openSettings), keyEquivalent: ",")
+        settingsItem.target = self
+        menu.addItem(settingsItem)
         let quitItem = NSMenuItem(title: "Zakończ", action: #selector(quit), keyEquivalent: "q")
         quitItem.target = self
         menu.addItem(quitItem)
@@ -92,18 +108,30 @@ final class StatusItemController: NSObject {
         return item
     }
 
-    static func jiraURL(_ jql: String) -> URL {
-        var comps = URLComponents()
-        comps.scheme = "https"
-        comps.host = "jira.redge.com"
-        comps.path = "/issues/"
-        comps.queryItems = [.init(name: "jql", value: jql)]
-        return comps.url!
+    func showNeedsConfig() {
+        guard let button = statusItem.button else { return }
+        let attachment = NSTextAttachment()
+        attachment.image = NSImage(systemSymbolName: "gearshape", accessibilityDescription: nil)
+        button.attributedTitle = NSAttributedString(attachment: attachment)
+        button.toolTip = "Skonfiguruj tokeny GitLab/Jira w Ustawieniach"
+
+        let menu = NSMenu()
+        menu.addItem(NSMenuItem(title: "Brak konfiguracji — uzupełnij tokeny", action: nil, keyEquivalent: ""))
+        menu.addItem(.separator())
+        let settingsItem = NSMenuItem(title: "Ustawienia…", action: #selector(openSettings), keyEquivalent: ",")
+        settingsItem.target = self
+        menu.addItem(settingsItem)
+        let quitItem = NSMenuItem(title: "Zakończ", action: #selector(quit), keyEquivalent: "q")
+        quitItem.target = self
+        menu.addItem(quitItem)
+        statusItem.menu = menu
     }
 
     @objc private func openLink(_ sender: NSMenuItem) {
         if let url = sender.representedObject as? URL { NSWorkspace.shared.open(url) }
     }
+
+    @objc private func openSettings() { onOpenSettings?() }
 
     @objc private func refresh() { onRefresh?() }
     @objc private func quit() { NSApplication.shared.terminate(nil) }
