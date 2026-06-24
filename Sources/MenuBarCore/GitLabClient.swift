@@ -50,8 +50,50 @@ public struct GitLabClient: GitLabFetching {
         return n
     }
 
+    struct MRRef: Decodable { let project_id: Int; let iid: Int }
+    struct Approvals: Decodable { let approved_by: [ApprovedBy] }
+    struct ApprovedBy: Decodable {}
+
     public func fetchReadyToMergeCount() async throws -> Int {
-        // Implemented in Task 3.
-        0
+        let mrs = try await fetchMyOpenMRs()
+        return try await withThrowingTaskGroup(of: Bool.self) { group in
+            for mr in mrs {
+                group.addTask { try await self.isReady(mr) }
+            }
+            var count = 0
+            for try await ready in group where ready { count += 1 }
+            return count
+        }
+    }
+
+    func fetchMyOpenMRs() async throws -> [MRRef] {
+        var page = 1
+        var result: [MRRef] = []
+        while true {
+            let req = request("/merge_requests", query: [
+                .init(name: "scope", value: "created_by_me"),
+                .init(name: "state", value: "opened"),
+                .init(name: "per_page", value: "100"),
+                .init(name: "page", value: String(page)),
+            ])
+            let (data, response) = try await session.data(for: req)
+            guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
+                throw GitLabError.badResponse
+            }
+            result.append(contentsOf: try JSONDecoder().decode([MRRef].self, from: data))
+            guard let next = http.value(forHTTPHeaderField: "X-Next-Page"),
+                  !next.isEmpty, let np = Int(next) else { break }
+            page = np
+        }
+        return result
+    }
+
+    func isReady(_ mr: MRRef) async throws -> Bool {
+        let req = request("/projects/\(mr.project_id)/merge_requests/\(mr.iid)/approvals", query: [])
+        let (data, response) = try await session.data(for: req)
+        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
+            throw GitLabError.badResponse
+        }
+        return try JSONDecoder().decode(Approvals.self, from: data).approved_by.count >= approvalThreshold
     }
 }
