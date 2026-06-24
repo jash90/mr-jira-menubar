@@ -8,7 +8,6 @@ final class StatusItemController: NSObject {
     var onOpenSettings: (() -> Void)?
     var gitlabHost = AppConfig.defaultGitLabHost
     var jiraHost = AppConfig.defaultJiraHost
-    var githubHost = AppConfig.defaultGitHubHost
     var githubWebHost = "github.com"
     private var isNeedsConfig = false
 

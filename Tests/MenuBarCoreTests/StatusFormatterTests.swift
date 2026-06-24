@@ -122,4 +122,33 @@ final class StatusFormatterTests: XCTestCase {
         )
         XCTAssertTrue(tip.contains("GitHub: 5 PR, 3 approved"))
     }
+
+    func testSegmentsShowWarningSymbolForErroredGitHubWithRetainedValue() {
+        let segs = StatusFormatter.segments(
+            gitlab: SourceResult(value: GitLabCounts(open: 8, ready: 2)),
+            github: SourceResult(value: GitHubCounts(open: 5, approved: 3), error: "boom"),
+            jira: SourceResult(value: JiraCounts(backlog: 4, inProgress: 1)),
+            visibility: SourceVisibility(gitlab: true, github: true, jira: true)
+        )
+        XCTAssertTrue(segs[2].isError)
+        XCTAssertTrue(segs[3].isError)
+        XCTAssertEqual(segs[2].symbol, StatusFormatter.errorSymbol)
+        XCTAssertEqual(segs[3].symbol, StatusFormatter.errorSymbol)
+        XCTAssertEqual(segs[2].text, "5")
+        XCTAssertEqual(segs[3].text, "3")
+        XCTAssertFalse(segs[0].isError)
+        XCTAssertFalse(segs[4].isError)
+    }
+
+    func testTooltipShowsRetainedGitHubValueAndErrorTogether() {
+        let tip = StatusFormatter.tooltip(
+            gitlab: SourceResult(value: GitLabCounts(open: 8, ready: 2)),
+            github: SourceResult(value: GitHubCounts(open: 5, approved: 3), error: "boom"),
+            jira: SourceResult(value: JiraCounts(backlog: 4, inProgress: 1)),
+            lastRefresh: nil,
+            visibility: SourceVisibility(gitlab: true, github: true, jira: true)
+        )
+        XCTAssertTrue(tip.contains("GitHub: 5 PR, 3 approved"))
+        XCTAssertTrue(tip.contains("GitHub błąd: boom"))
+    }
 }

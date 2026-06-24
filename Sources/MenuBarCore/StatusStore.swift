@@ -37,22 +37,22 @@ public final class StatusStore {
     public private(set) var lastRefresh: Date?
     public var onUpdate: (@MainActor () -> Void)?
 
-    private var gitlabClient: GitLabFetching
-    private var jiraClient: JiraFetching
+    private var gitlabClient: GitLabFetching?
+    private var jiraClient: JiraFetching?
     private var githubClient: GitHubFetching?
     private let interval: TimeInterval
     private var timer: Timer?
     private var refreshTask: Task<Void, Never>?
     private var refreshGeneration = 0
 
-    public init(gitlabClient: GitLabFetching, jiraClient: JiraFetching, githubClient: GitHubFetching? = nil, interval: TimeInterval = 300) {
+    public init(gitlabClient: GitLabFetching? = nil, jiraClient: JiraFetching? = nil, githubClient: GitHubFetching? = nil, interval: TimeInterval = 300) {
         self.gitlabClient = gitlabClient
         self.jiraClient = jiraClient
         self.githubClient = githubClient
         self.interval = interval
     }
 
-    public func setClients(gitlabClient: GitLabFetching, jiraClient: JiraFetching, githubClient: GitHubFetching? = nil) {
+    public func setClients(gitlabClient: GitLabFetching? = nil, jiraClient: JiraFetching? = nil, githubClient: GitHubFetching? = nil) {
         self.gitlabClient = gitlabClient
         self.jiraClient = jiraClient
         self.githubClient = githubClient
@@ -105,8 +105,8 @@ public final class StatusStore {
     }
 
     public func refresh() async {
-        gitlab.isLoading = true
-        jira.isLoading = true
+        if gitlabClient != nil { gitlab.isLoading = true } else { gitlab = SourceResult() }
+        if jiraClient != nil { jira.isLoading = true } else { jira = SourceResult() }
         if githubClient != nil { github.isLoading = true } else { github = SourceResult() }
         onUpdate?()
         async let g: Void = refreshGitLab()
@@ -121,6 +121,8 @@ public final class StatusStore {
     }
 
     private func refreshGitLab() async {
+        guard let gitlabClient else { return }
+
         do {
             async let open = gitlabClient.fetchOpenMRCount()
             async let ready = gitlabClient.fetchReadyToMergeCount()
@@ -138,6 +140,8 @@ public final class StatusStore {
     }
 
     private func refreshJira() async {
+        guard let jiraClient else { return }
+
         do {
             async let backlog = jiraClient.backlogCount()
             async let inProgress = jiraClient.inProgressCount()

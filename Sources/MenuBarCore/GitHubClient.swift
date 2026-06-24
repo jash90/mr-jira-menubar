@@ -25,9 +25,23 @@ public struct GitHubClient: GitHubFetching, Sendable {
     let session: URLSession
 
     public init(host: String = "api.github.com", token: String, session: URLSession = .shared) {
-        self.host = host
+        self.host = Self.normalizeHost(host)
         self.token = token
         self.session = session
+    }
+
+    static func normalizeHost(_ raw: String) -> String {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        let withoutScheme = trimmed
+            .replacingOccurrences(of: "https://", with: "")
+            .replacingOccurrences(of: "http://", with: "")
+        let bare = withoutScheme.split(separator: "/").first.map(String.init) ?? withoutScheme
+
+        if bare == "github.com" || bare == "www.github.com" {
+            return "api.github.com"
+        }
+
+        return bare
     }
 
     static let openQuery = "is:pr is:open author:@me archived:false"
@@ -49,7 +63,9 @@ public struct GitHubClient: GitHubFetching, Sendable {
             .init(name: "q", value: query),
             .init(name: "per_page", value: "1"),
         ]
-        var req = URLRequest(url: comps.url!)
+        guard let url = comps.url else { throw GitHubError.badResponse }
+
+        var req = URLRequest(url: url)
         req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         req.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
         req.setValue("2022-11-28", forHTTPHeaderField: "X-GitHub-Api-Version")

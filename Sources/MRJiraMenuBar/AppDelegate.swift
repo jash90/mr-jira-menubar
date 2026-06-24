@@ -1,23 +1,6 @@
 import AppKit
 import MenuBarCore
 
-private struct FailingGitLab: GitLabFetching {
-    let error: Error
-    func fetchOpenMRCount() async throws -> Int { throw error }
-    func fetchReadyToMergeCount() async throws -> Int { throw error }
-}
-
-private struct FailingJira: JiraFetching {
-    let error: Error
-    func backlogCount() async throws -> Int { throw error }
-    func inProgressCount() async throws -> Int { throw error }
-}
-
-private enum AppError: Error, CustomStringConvertible {
-    case notConfigured
-    var description: String { "Brak konfiguracji" }
-}
-
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private let settings = SettingsStore(secrets: KeychainSecretStore())
@@ -33,10 +16,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         settings.seedFromFilesIfNeeded()
 
-        store = StatusStore(
-            gitlabClient: FailingGitLab(error: AppError.notConfigured),
-            jiraClient: FailingJira(error: AppError.notConfigured)
-        )
+        store = StatusStore()
         store.onUpdate = { [weak self] in
             guard let self else { return }
             self.controller.update(
@@ -63,23 +43,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let config = settings.config
         controller.gitlabHost = config.gitlabHost
         controller.jiraHost = config.jiraHost
-        controller.githubHost = config.githubHost
         controller.githubWebHost = config.githubHost == "api.github.com" ? "github.com" : config.githubHost
 
         guard config.hasAnySource else {
             store.stop()
-            store.setClients(
-                gitlabClient: FailingGitLab(error: AppError.notConfigured),
-                jiraClient: FailingJira(error: AppError.notConfigured),
-                githubClient: nil
-            )
+            store.setClients(gitlabClient: nil, jiraClient: nil, githubClient: nil)
             controller.showNeedsConfig()
             openSettings()
             return
         }
 
-        let (gitlab, jira) = ClientFactory.make(config)
-        store.setClients(gitlabClient: gitlab, jiraClient: jira, githubClient: ClientFactory.makeGitHub(config))
+        store.setClients(
+            gitlabClient: ClientFactory.makeGitLab(config),
+            jiraClient: ClientFactory.makeJira(config),
+            githubClient: ClientFactory.makeGitHub(config)
+        )
         controller.markConfigured()
         store.scheduleTimer()
         store.restartRefresh()

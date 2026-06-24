@@ -19,4 +19,16 @@ final class ClientFactoryTests: XCTestCase {
         let active = AppConfig(githubHost: "api.github.com", githubToken: "t")
         XCTAssertNotNil(ClientFactory.makeGitHub(active))
     }
+
+    func testMakeGitLabReturnsNilWhenInactiveAndClientWhenActive() {
+        XCTAssertNil(ClientFactory.makeGitLab(AppConfig()))  // empty gitlab token
+        let active = AppConfig(gitlabHost: "gl.example", gitlabToken: "t")
+        XCTAssertEqual((ClientFactory.makeGitLab(active) as? GitLabClient)?.host, "gl.example")
+    }
+
+    func testMakeJiraReturnsNilWhenInactiveAndClientWhenActive() {
+        XCTAssertNil(ClientFactory.makeJira(AppConfig()))  // empty jira token
+        let active = AppConfig(jiraHost: "jira.example", jiraToken: "t")
+        XCTAssertEqual((ClientFactory.makeJira(active) as? JiraClient)?.host, "jira.example")
+    }
 }

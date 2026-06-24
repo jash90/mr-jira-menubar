@@ -49,6 +49,25 @@ private struct FakeGitHub: GitHubFetching {
     func fetchApprovedPRCount() async throws -> Int { try approved.get() }
 }
 
+private final class MutableGitHub: GitHubFetching, @unchecked Sendable {
+    private let lock = NSLock()
+    private var _open: Result<Int, Error>
+    private var _approved: Result<Int, Error>
+
+    var open: Result<Int, Error> {
+        get { lock.withLock { _open } }
+        set { lock.withLock { _open = newValue } }
+    }
+    var approved: Result<Int, Error> {
+        get { lock.withLock { _approved } }
+        set { lock.withLock { _approved = newValue } }
+    }
+
+    init(open: Result<Int, Error>, approved: Result<Int, Error>) { self._open = open; self._approved = approved }
+    func fetchOpenPRCount() async throws -> Int { try open.get() }
+    func fetchApprovedPRCount() async throws -> Int { try approved.get() }
+}
+
 private enum TestError: Error { case boom }
 
 private actor Gate {
@@ -211,5 +230,75 @@ final class StatusStoreTests: XCTestCase {
         await store.refresh()
         XCTAssertNil(store.github.value)
         XCTAssertNil(store.github.error)
+    }
+
+    @MainActor
+    func testGitHubErrorRetainsLastValueAndLeavesGitLabJiraIntact() async {
+        let gh = MutableGitHub(open: .success(5), approved: .success(3))
+        let store = StatusStore(
+            gitlabClient: MutableGitLab(open: .success(8), ready: .success(2)),
+            jiraClient: MutableJira(backlog: .success(4), inProgress: .success(1)),
+            githubClient: gh
+        )
+        await store.refresh()
+        gh.open = .failure(TestError.boom)
+        await store.refresh()
+        XCTAssertEqual(store.github.value, GitHubCounts(open: 5, approved: 3))
+        XCTAssertNotNil(store.github.error)
+        XCTAssertEqual(store.gitlab.value, GitLabCounts(open: 8, ready: 2))
+        XCTAssertNil(store.gitlab.error)
+        XCTAssertEqual(store.jira.value, JiraCounts(backlog: 4, inProgress: 1))
+        XCTAssertNil(store.jira.error)
+    }
+
+    @MainActor
+    func testGitLabClearsToNeutralWhenClientNilAndLeavesOthersIntact() async {
+        let store = StatusStore(
+            gitlabClient: MutableGitLab(open: .success(8), ready: .success(2)),
+            jiraClient: MutableJira(backlog: .success(4), inProgress: .success(1))
+        )
+        await store.refresh()
+        XCTAssertNotNil(store.gitlab.value)
+
+        store.setClients(
+            gitlabClient: nil,
+            jiraClient: MutableJira(backlog: .success(4), inProgress: .success(1))
+        )
+        await store.refresh()
+        XCTAssertNil(store.gitlab.value)
+        XCTAssertNil(store.gitlab.error)
+        XCTAssertEqual(store.jira.value, JiraCounts(backlog: 4, inProgress: 1))
+    }
+
+    @MainActor
+    func testJiraClearsToNeutralWhenClientNilAndLeavesOthersIntact() async {
+        let store = StatusStore(
+            gitlabClient: MutableGitLab(open: .success(8), ready: .success(2)),
+            jiraClient: MutableJira(backlog: .success(4), inProgress: .success(1))
+        )
+        await store.refresh()
+        XCTAssertNotNil(store.jira.value)
+
+        store.setClients(
+            gitlabClient: MutableGitLab(open: .success(8), ready: .success(2)),
+            jiraClient: nil
+        )
+        await store.refresh()
+        XCTAssertNil(store.jira.value)
+        XCTAssertNil(store.jira.error)
+        XCTAssertEqual(store.gitlab.value, GitLabCounts(open: 8, ready: 2))
+    }
+
+    @MainActor
+    func testInactiveSourcesAreNotFetched() async {
+        let store = StatusStore(gitlabClient: nil, jiraClient: nil, githubClient: nil)
+        await store.refresh()
+        XCTAssertNil(store.gitlab.value)
+        XCTAssertNil(store.gitlab.error)
+        XCTAssertNil(store.jira.value)
+        XCTAssertNil(store.jira.error)
+        XCTAssertNil(store.github.value)
+        XCTAssertNil(store.github.error)
+        XCTAssertNotNil(store.lastRefresh)
     }
 }
