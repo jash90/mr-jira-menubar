@@ -42,6 +42,13 @@ private final class MutableJira: JiraFetching, @unchecked Sendable {
     func inProgressCount() async throws -> Int { try inProgress.get() }
 }
 
+private struct FakeGitHub: GitHubFetching {
+    var open: Result<Int, Error>
+    var approved: Result<Int, Error>
+    func fetchOpenPRCount() async throws -> Int { try open.get() }
+    func fetchApprovedPRCount() async throws -> Int { try approved.get() }
+}
+
 private enum TestError: Error { case boom }
 
 private actor Gate {
@@ -173,5 +180,36 @@ final class StatusStoreTests: XCTestCase {
 
         XCTAssertEqual(store.gitlab.value, GitLabCounts(open: 9, ready: 9))
         XCTAssertEqual(store.jira.value, JiraCounts(backlog: 2, inProgress: 1))
+    }
+
+    @MainActor
+    func testGitHubSourcePopulatesWhenClientPresent() async {
+        let store = StatusStore(
+            gitlabClient: MutableGitLab(open: .success(1), ready: .success(0)),
+            jiraClient: MutableJira(backlog: .success(0), inProgress: .success(0)),
+            githubClient: FakeGitHub(open: .success(5), approved: .success(3))
+        )
+        await store.refresh()
+        XCTAssertEqual(store.github.value, GitHubCounts(open: 5, approved: 3))
+    }
+
+    @MainActor
+    func testGitHubClearsToNeutralWhenClientNil() async {
+        let store = StatusStore(
+            gitlabClient: MutableGitLab(open: .success(1), ready: .success(0)),
+            jiraClient: MutableJira(backlog: .success(0), inProgress: .success(0)),
+            githubClient: FakeGitHub(open: .success(5), approved: .success(3))
+        )
+        await store.refresh()
+        XCTAssertNotNil(store.github.value)
+
+        store.setClients(
+            gitlabClient: MutableGitLab(open: .success(1), ready: .success(0)),
+            jiraClient: MutableJira(backlog: .success(0), inProgress: .success(0)),
+            githubClient: nil
+        )
+        await store.refresh()
+        XCTAssertNil(store.github.value)
+        XCTAssertNil(store.github.error)
     }
 }

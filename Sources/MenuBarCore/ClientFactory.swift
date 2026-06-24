@@ -7,4 +7,10 @@ public enum ClientFactory {
             JiraClient(host: config.jiraHost, token: config.jiraToken)
         )
     }
+
+    public static func makeGitHub(_ config: AppConfig) -> (any GitHubFetching)? {
+        guard config.githubActive else { return nil }
+
+        return GitHubClient(host: config.githubHost, token: config.githubToken)
+    }
 }

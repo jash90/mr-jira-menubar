@@ -12,6 +12,12 @@ public struct JiraCounts: Equatable {
     public init(backlog: Int, inProgress: Int) { self.backlog = backlog; self.inProgress = inProgress }
 }
 
+public struct GitHubCounts: Equatable {
+    public let open: Int
+    public let approved: Int
+    public init(open: Int, approved: Int) { self.open = open; self.approved = approved }
+}
+
 public struct SourceResult<T: Equatable>: Equatable {
     public var value: T?
     public var error: String?
@@ -27,25 +33,29 @@ public struct SourceResult<T: Equatable>: Equatable {
 public final class StatusStore {
     public private(set) var gitlab = SourceResult<GitLabCounts>()
     public private(set) var jira = SourceResult<JiraCounts>()
+    public private(set) var github = SourceResult<GitHubCounts>()
     public private(set) var lastRefresh: Date?
     public var onUpdate: (@MainActor () -> Void)?
 
     private var gitlabClient: GitLabFetching
     private var jiraClient: JiraFetching
+    private var githubClient: GitHubFetching?
     private let interval: TimeInterval
     private var timer: Timer?
     private var refreshTask: Task<Void, Never>?
     private var refreshGeneration = 0
 
-    public init(gitlabClient: GitLabFetching, jiraClient: JiraFetching, interval: TimeInterval = 300) {
+    public init(gitlabClient: GitLabFetching, jiraClient: JiraFetching, githubClient: GitHubFetching? = nil, interval: TimeInterval = 300) {
         self.gitlabClient = gitlabClient
         self.jiraClient = jiraClient
+        self.githubClient = githubClient
         self.interval = interval
     }
 
-    public func setClients(gitlabClient: GitLabFetching, jiraClient: JiraFetching) {
+    public func setClients(gitlabClient: GitLabFetching, jiraClient: JiraFetching, githubClient: GitHubFetching? = nil) {
         self.gitlabClient = gitlabClient
         self.jiraClient = jiraClient
+        self.githubClient = githubClient
     }
 
     public func start() {
@@ -97,10 +107,12 @@ public final class StatusStore {
     public func refresh() async {
         gitlab.isLoading = true
         jira.isLoading = true
+        if githubClient != nil { github.isLoading = true } else { github = SourceResult() }
         onUpdate?()
         async let g: Void = refreshGitLab()
         async let j: Void = refreshJira()
-        _ = await (g, j)
+        async let gh: Void = refreshGitHub()
+        _ = await (g, j, gh)
 
         if Task.isCancelled { return }
 
@@ -142,11 +154,31 @@ public final class StatusStore {
         onUpdate?()
     }
 
+    private func refreshGitHub() async {
+        guard let githubClient else { return }
+
+        do {
+            async let open = githubClient.fetchOpenPRCount()
+            async let approved = githubClient.fetchApprovedPRCount()
+            let counts = GitHubCounts(open: try await open, approved: try await approved)
+
+            if Task.isCancelled { return }
+
+            github = SourceResult(value: counts, error: nil, isLoading: false)
+        } catch {
+            if Task.isCancelled { return }
+
+            github = SourceResult(value: github.value, error: Self.message(error), isLoading: false)
+        }
+        onUpdate?()
+    }
+
     public static func message(_ error: Error) -> String {
         switch error {
         case let e as CredentialsError: return e.description
         case let e as GitLabError: return e.description
         case let e as JiraError: return e.description
+        case let e as GitHubError: return e.description
         default: return error.localizedDescription
         }
     }
