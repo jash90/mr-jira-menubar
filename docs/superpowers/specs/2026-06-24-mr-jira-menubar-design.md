@@ -74,6 +74,20 @@ Tokens are held in memory at runtime; the only persistence is the Keychain.
 Distributed as a `.app` bundle (agent app, `LSUIElement = true`, ad-hoc signed) wrapped in a
 `.dmg` for install (drag to `/Applications`). Built by `scripts/build-app.sh`.
 
+## v3 — GitHub source (current)
+
+A third, optional source alongside GitLab and Jira:
+
+- **Counters:** my **open PRs** (`is:pr is:open author:@me archived:false`) and my **approved PRs**
+  (same + `review:approved`), via the GitHub Search API `total_count`. Shown as two extra menu-bar
+  segments with their own SF Symbols, plus a "GitHub — moje PR" menu section linking to the web PR list.
+- **Config:** GitHub host (default `api.github.com`; Enterprise hosts use the `/api/v3` path) + token,
+  editable in Settings and stored in the Keychain like the others. No `gh`-CLI seeding (none installed) —
+  the token is entered manually.
+- **Per-source independence:** each source is active only when its host+token are set. Inactive sources
+  are hidden (no segment, not fetched) rather than shown as errors. The app shows the "needs config"
+  state only when **no** source is active (`hasAnySource == false`).
+
 ## Components
 
 Each is independently testable, communicating through small interfaces.

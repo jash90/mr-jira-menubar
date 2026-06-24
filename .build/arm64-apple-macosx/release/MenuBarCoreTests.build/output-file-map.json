@@ -4,6 +4,12 @@
     "object": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/MenuBarCoreTests.o",
     "swift-dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/primary.swiftdeps"
   },
+  "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/ClientFactoryTests.swift": {
+    "object": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/ClientFactoryTests.swift.o",
+    "swiftmodule": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/ClientFactoryTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/ClientFactoryTests.swiftdeps",
+    "diagnostics": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/ClientFactoryTests.dia"
+  },
   "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/CredentialsTests.swift": {
     "object": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/CredentialsTests.swift.o",
     "swiftmodule": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/CredentialsTests~partial.swiftmodule",
@@ -21,6 +27,18 @@
     "swiftmodule": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/JiraClientTests~partial.swiftmodule",
     "swift-dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/JiraClientTests.swiftdeps",
     "diagnostics": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/JiraClientTests.dia"
+  },
+  "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/SecretStoreTests.swift": {
+    "object": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/SecretStoreTests.swift.o",
+    "swiftmodule": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/SecretStoreTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/SecretStoreTests.swiftdeps",
+    "diagnostics": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/SecretStoreTests.dia"
+  },
+  "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/SettingsStoreTests.swift": {
+    "object": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/SettingsStoreTests.swift.o",
+    "swiftmodule": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/SettingsStoreTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/SettingsStoreTests.swiftdeps",
+    "diagnostics": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/SettingsStoreTests.dia"
   },
   "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/StatusFormatterTests.swift": {
     "object": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MenuBarCoreTests.build/StatusFormatterTests.swift.o",

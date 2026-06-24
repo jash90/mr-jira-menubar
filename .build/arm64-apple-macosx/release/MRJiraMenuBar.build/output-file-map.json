@@ -10,6 +10,18 @@
     "swift-dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MRJiraMenuBar.build/AppDelegate.swiftdeps",
     "diagnostics": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MRJiraMenuBar.build/AppDelegate.dia"
   },
+  "/Users/redge/Projects/mr-jira-menubar/Sources/MRJiraMenuBar/SettingsView.swift": {
+    "object": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MRJiraMenuBar.build/SettingsView.swift.o",
+    "swiftmodule": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MRJiraMenuBar.build/SettingsView~partial.swiftmodule",
+    "swift-dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MRJiraMenuBar.build/SettingsView.swiftdeps",
+    "diagnostics": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MRJiraMenuBar.build/SettingsView.dia"
+  },
+  "/Users/redge/Projects/mr-jira-menubar/Sources/MRJiraMenuBar/SettingsWindowController.swift": {
+    "object": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MRJiraMenuBar.build/SettingsWindowController.swift.o",
+    "swiftmodule": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MRJiraMenuBar.build/SettingsWindowController~partial.swiftmodule",
+    "swift-dependencies": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MRJiraMenuBar.build/SettingsWindowController.swiftdeps",
+    "diagnostics": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MRJiraMenuBar.build/SettingsWindowController.dia"
+  },
   "/Users/redge/Projects/mr-jira-menubar/Sources/MRJiraMenuBar/StatusItemController.swift": {
     "object": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MRJiraMenuBar.build/StatusItemController.swift.o",
     "swiftmodule": "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/release/MRJiraMenuBar.build/StatusItemController~partial.swiftmodule",

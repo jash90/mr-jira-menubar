@@ -32,6 +32,14 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/Sources/MRJiraMenuBar/SettingsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/Sources/MRJiraMenuBar/SettingsWindowController.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/Sources/MRJiraMenuBar/StatusItemController.swift"
         },
         {
@@ -56,6 +64,8 @@
       "moduleOutputPath" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/Modules/MRJiraMenuBar.swiftmodule",
       "objects" : [
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/AppDelegate.swift.o",
+        "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/SettingsView.swift.o",
+        "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/SettingsWindowController.swift.o",
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/StatusItemController.swift.o",
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/main.swift.o"
       ],
@@ -116,6 +126,14 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/SettingsView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/SettingsWindowController.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/StatusItemController.swift.o"
         },
         {
@@ -130,6 +148,8 @@
       "prepareForIndexing" : false,
       "sources" : [
         "/Users/redge/Projects/mr-jira-menubar/Sources/MRJiraMenuBar/AppDelegate.swift",
+        "/Users/redge/Projects/mr-jira-menubar/Sources/MRJiraMenuBar/SettingsView.swift",
+        "/Users/redge/Projects/mr-jira-menubar/Sources/MRJiraMenuBar/SettingsWindowController.swift",
         "/Users/redge/Projects/mr-jira-menubar/Sources/MRJiraMenuBar/StatusItemController.swift",
         "/Users/redge/Projects/mr-jira-menubar/Sources/MRJiraMenuBar/main.swift"
       ],
@@ -238,6 +258,14 @@
       "inputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/AppConfig.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/ClientFactory.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/Credentials.swift"
         },
         {
@@ -247,6 +275,14 @@
         {
           "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/JiraClient.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/SecretStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/SettingsStore.swift"
         },
         {
           "kind" : "file",
@@ -269,9 +305,13 @@
       "moduleName" : "MenuBarCore",
       "moduleOutputPath" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/Modules/MenuBarCore.swiftmodule",
       "objects" : [
+        "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/AppConfig.swift.o",
+        "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/ClientFactory.swift.o",
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/Credentials.swift.o",
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/GitLabClient.swift.o",
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/JiraClient.swift.o",
+        "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/SecretStore.swift.o",
+        "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/SettingsStore.swift.o",
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/StatusFormatter.swift.o",
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/StatusStore.swift.o"
       ],
@@ -328,6 +368,14 @@
       "outputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/AppConfig.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/ClientFactory.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/Credentials.swift.o"
         },
         {
@@ -337,6 +385,14 @@
         {
           "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/JiraClient.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/SecretStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/SettingsStore.swift.o"
         },
         {
           "kind" : "file",
@@ -353,9 +409,13 @@
       ],
       "prepareForIndexing" : false,
       "sources" : [
+        "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/AppConfig.swift",
+        "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/ClientFactory.swift",
         "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/Credentials.swift",
         "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/GitLabClient.swift",
         "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/JiraClient.swift",
+        "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/SecretStore.swift",
+        "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/SettingsStore.swift",
         "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/StatusFormatter.swift",
         "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/StatusStore.swift"
       ],
@@ -369,6 +429,10 @@
       "inputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/ClientFactoryTests.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/CredentialsTests.swift"
         },
         {
@@ -378,6 +442,14 @@
         {
           "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/JiraClientTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/SecretStoreTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/SettingsStoreTests.swift"
         },
         {
           "kind" : "file",
@@ -408,9 +480,12 @@
       "moduleName" : "MenuBarCoreTests",
       "moduleOutputPath" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/Modules/MenuBarCoreTests.swiftmodule",
       "objects" : [
+        "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/ClientFactoryTests.swift.o",
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/CredentialsTests.swift.o",
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/GitLabClientTests.swift.o",
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/JiraClientTests.swift.o",
+        "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/SecretStoreTests.swift.o",
+        "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/SettingsStoreTests.swift.o",
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/StatusFormatterTests.swift.o",
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/StatusStoreTests.swift.o",
         "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/StubURLProtocol.swift.o"
@@ -467,6 +542,10 @@
       "outputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/ClientFactoryTests.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/CredentialsTests.swift.o"
         },
         {
@@ -476,6 +555,14 @@
         {
           "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/JiraClientTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/SecretStoreTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/SettingsStoreTests.swift.o"
         },
         {
           "kind" : "file",
@@ -496,9 +583,12 @@
       ],
       "prepareForIndexing" : false,
       "sources" : [
+        "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/ClientFactoryTests.swift",
         "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/CredentialsTests.swift",
         "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/GitLabClientTests.swift",
         "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/JiraClientTests.swift",
+        "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/SecretStoreTests.swift",
+        "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/SettingsStoreTests.swift",
         "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/StatusFormatterTests.swift",
         "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/StatusStoreTests.swift",
         "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/Support/StubURLProtocol.swift"
@@ -519,6 +609,8 @@
       "mr_jira_menubar",
       "-c",
       "/Users/redge/Projects/mr-jira-menubar/Sources/MRJiraMenuBar/AppDelegate.swift",
+      "/Users/redge/Projects/mr-jira-menubar/Sources/MRJiraMenuBar/SettingsView.swift",
+      "/Users/redge/Projects/mr-jira-menubar/Sources/MRJiraMenuBar/SettingsWindowController.swift",
       "/Users/redge/Projects/mr-jira-menubar/Sources/MRJiraMenuBar/StatusItemController.swift",
       "/Users/redge/Projects/mr-jira-menubar/Sources/MRJiraMenuBar/main.swift",
       "-I",
@@ -640,9 +732,13 @@
       "-package-name",
       "mr_jira_menubar",
       "-c",
+      "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/AppConfig.swift",
+      "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/ClientFactory.swift",
       "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/Credentials.swift",
       "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/GitLabClient.swift",
       "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/JiraClient.swift",
+      "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/SecretStore.swift",
+      "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/SettingsStore.swift",
       "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/StatusFormatter.swift",
       "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/StatusStore.swift",
       "-I",
@@ -704,9 +800,12 @@
       "-package-name",
       "mr_jira_menubar",
       "-c",
+      "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/ClientFactoryTests.swift",
       "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/CredentialsTests.swift",
       "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/GitLabClientTests.swift",
       "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/JiraClientTests.swift",
+      "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/SecretStoreTests.swift",
+      "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/SettingsStoreTests.swift",
       "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/StatusFormatterTests.swift",
       "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/StatusStoreTests.swift",
       "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/Support/StubURLProtocol.swift",
@@ -826,6 +925,14 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/Sources/MRJiraMenuBar/SettingsView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/Sources/MRJiraMenuBar/SettingsWindowController.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/Sources/MRJiraMenuBar/StatusItemController.swift"
         },
         {
@@ -848,11 +955,27 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/SettingsView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/SettingsWindowController.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/StatusItemController.swift.o"
         },
         {
           "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MRJiraMenuBar.build/main.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/AppConfig.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/ClientFactory.swift.o"
         },
         {
           "kind" : "file",
@@ -865,6 +988,14 @@
         {
           "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/JiraClient.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/SecretStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/SettingsStore.swift.o"
         },
         {
           "kind" : "file",
@@ -904,6 +1035,14 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/AppConfig.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/ClientFactory.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/Credentials.swift.o"
         },
         {
@@ -916,11 +1055,23 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/SecretStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/SettingsStore.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/StatusFormatter.swift.o"
         },
         {
           "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCore.build/StatusStore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/ClientFactoryTests.swift.o"
         },
         {
           "kind" : "file",
@@ -933,6 +1084,14 @@
         {
           "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/JiraClientTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/SecretStoreTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/.build/arm64-apple-macosx/debug/MenuBarCoreTests.build/SettingsStoreTests.swift.o"
         },
         {
           "kind" : "file",
@@ -958,6 +1117,14 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/AppConfig.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/ClientFactory.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/Credentials.swift"
         },
         {
@@ -967,6 +1134,14 @@
         {
           "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/JiraClient.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/SecretStore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/SettingsStore.swift"
         },
         {
           "kind" : "file",
@@ -988,6 +1163,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/ClientFactoryTests.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/CredentialsTests.swift"
         },
         {
@@ -997,6 +1176,14 @@
         {
           "kind" : "file",
           "name" : "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/JiraClientTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/SecretStoreTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/redge/Projects/mr-jira-menubar/Tests/MenuBarCoreTests/SettingsStoreTests.swift"
         },
         {
           "kind" : "file",

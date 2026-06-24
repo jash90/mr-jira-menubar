@@ -1,5 +1,9 @@
+/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/AppConfig.swift
+/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/ClientFactory.swift
 /Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/Credentials.swift
 /Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/GitLabClient.swift
 /Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/JiraClient.swift
+/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/SecretStore.swift
+/Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/SettingsStore.swift
 /Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/StatusFormatter.swift
 /Users/redge/Projects/mr-jira-menubar/Sources/MenuBarCore/StatusStore.swift
