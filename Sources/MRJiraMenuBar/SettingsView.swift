@@ -28,11 +28,18 @@ struct SettingsView: View {
                 }.padding(6)
             }
 
+            GroupBox("GitHub") {
+                VStack(alignment: .leading, spacing: 8) {
+                    LabeledContent("Host") { TextField("api.github.com", text: $config.githubHost) }
+                    LabeledContent("Token") { SecureField("Personal Access Token", text: $config.githubToken) }
+                }.padding(6)
+            }
+
             HStack {
                 Spacer()
                 Button("Zapisz") { onSave(config) }
                     .keyboardShortcut(.defaultAction)
-                    .disabled(!config.isComplete)
+                    .disabled(!config.hasAnySource)
             }
         }
         .padding(20)

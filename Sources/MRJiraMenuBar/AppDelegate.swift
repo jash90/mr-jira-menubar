@@ -25,6 +25,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let settingsWindow = SettingsWindowController()
     private var store: StatusStore!
 
+    private var visibility: SourceVisibility {
+        let c = settings.config
+        return SourceVisibility(gitlab: c.gitlabActive, github: c.githubActive, jira: c.jiraActive)
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         settings.seedFromFilesIfNeeded()
 
@@ -34,7 +39,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         store.onUpdate = { [weak self] in
             guard let self else { return }
-            self.controller.update(gitlab: self.store.gitlab, jira: self.store.jira, lastRefresh: self.store.lastRefresh)
+            self.controller.update(
+                gitlab: self.store.gitlab,
+                github: self.store.github,
+                jira: self.store.jira,
+                lastRefresh: self.store.lastRefresh,
+                visibility: self.visibility
+            )
         }
         controller.onRefresh = { [weak self] in self?.store.refreshNow() }
         controller.onOpenSettings = { [weak self] in self?.openSettings() }
@@ -52,12 +63,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let config = settings.config
         controller.gitlabHost = config.gitlabHost
         controller.jiraHost = config.jiraHost
+        controller.githubHost = config.githubHost
+        controller.githubWebHost = config.githubHost == "api.github.com" ? "github.com" : config.githubHost
 
-        guard config.isComplete else {
+        guard config.hasAnySource else {
             store.stop()
             store.setClients(
                 gitlabClient: FailingGitLab(error: AppError.notConfigured),
-                jiraClient: FailingJira(error: AppError.notConfigured)
+                jiraClient: FailingJira(error: AppError.notConfigured),
+                githubClient: nil
             )
             controller.showNeedsConfig()
             openSettings()
@@ -65,7 +79,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         let (gitlab, jira) = ClientFactory.make(config)
-        store.setClients(gitlabClient: gitlab, jiraClient: jira)
+        store.setClients(gitlabClient: gitlab, jiraClient: jira, githubClient: ClientFactory.makeGitHub(config))
         controller.markConfigured()
         store.scheduleTimer()
         store.restartRefresh()
