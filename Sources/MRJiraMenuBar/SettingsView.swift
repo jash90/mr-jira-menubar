@@ -17,9 +17,11 @@ struct SettingsView: View {
             GroupBox("GitLab") {
                 VStack(alignment: .leading, spacing: 8) {
                     Toggle("Włącz GitLab", isOn: $config.gitlabEnabled)
-                    LabeledContent("Host") { TextField("", text: $config.gitlabHost) }
-                    LabeledContent("Token") { SecureField("PRIVATE-TOKEN", text: $config.gitlabToken) }
-                        .disabled(!config.gitlabEnabled)
+                    VStack(alignment: .leading, spacing: 8) {
+                        LabeledContent("Host") { TextField("", text: $config.gitlabHost) }
+                        LabeledContent("Token") { SecureField("PRIVATE-TOKEN", text: $config.gitlabToken) }
+                    }
+                    .disabled(!config.gitlabEnabled)
                 }.padding(6)
             }
 
@@ -33,9 +35,11 @@ struct SettingsView: View {
             GroupBox("GitHub") {
                 VStack(alignment: .leading, spacing: 8) {
                     Toggle("Włącz GitHub", isOn: $config.githubEnabled)
-                    LabeledContent("Host") { TextField("api.github.com", text: $config.githubHost) }
-                    LabeledContent("Token") { SecureField("Personal Access Token", text: $config.githubToken) }
-                        .disabled(!config.githubEnabled)
+                    VStack(alignment: .leading, spacing: 8) {
+                        LabeledContent("Host") { TextField("api.github.com", text: $config.githubHost) }
+                        LabeledContent("Token") { SecureField("Personal Access Token", text: $config.githubToken) }
+                    }
+                    .disabled(!config.githubEnabled)
                 }.padding(6)
             }
 
