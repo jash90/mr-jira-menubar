@@ -1,5 +1,15 @@
 import Foundation
 
+/// Strips scheme, path and surrounding whitespace from user-entered host input so it is
+/// safe to feed into `URLComponents.host` (which yields a nil `url` otherwise → force-unwrap trap).
+public func normalizedHost(_ raw: String) -> String {
+    let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+    let withoutScheme = trimmed
+        .replacingOccurrences(of: "https://", with: "")
+        .replacingOccurrences(of: "http://", with: "")
+    return withoutScheme.split(separator: "/").first.map(String.init) ?? ""
+}
+
 public struct AppConfig: Equatable, Sendable {
     public var gitlabHost: String
     public var gitlabToken: String

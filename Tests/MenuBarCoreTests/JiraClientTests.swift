@@ -4,6 +4,14 @@ import XCTest
 final class JiraClientTests: XCTestCase {
     override func tearDown() { StubURLProtocol.handler = nil; super.tearDown() }
 
+    // Regression: these host forms made URLComponents.url nil → force-unwrap trap (SIGTRAP).
+    func testHostIsNormalizedSoUrlBuildsWithoutCrash() {
+        XCTAssertEqual(normalizedHost("https://jira.example.com"), "jira.example.com")
+        XCTAssertEqual(normalizedHost("jira.example.com/"), "jira.example.com")
+        XCTAssertEqual(normalizedHost("  jira.example.com  "), "jira.example.com")
+        XCTAssertEqual(JiraClient(host: "https://jira.example.com/", token: "t").host, "jira.example.com")
+    }
+
     func testCountParsesTotalAndSendsBearer() async throws {
         StubURLProtocol.handler = { req in
             XCTAssertEqual(req.url!.path, "/rest/api/2/search")

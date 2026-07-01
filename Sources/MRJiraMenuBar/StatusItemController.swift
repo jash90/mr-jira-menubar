@@ -6,9 +6,9 @@ final class StatusItemController: NSObject {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     var onRefresh: (() -> Void)?
     var onOpenSettings: (() -> Void)?
-    var gitlabHost = AppConfig.defaultGitLabHost
-    var jiraHost = AppConfig.defaultJiraHost
-    var githubWebHost = "github.com"
+    var gitlabHost = AppConfig.defaultGitLabHost { didSet { gitlabHost = normalizedHost(gitlabHost) } }
+    var jiraHost = AppConfig.defaultJiraHost { didSet { jiraHost = normalizedHost(jiraHost) } }
+    var githubWebHost = "github.com" { didSet { githubWebHost = normalizedHost(githubWebHost) } }
     private var isNeedsConfig = false
 
     private var mrDashboardURL: URL {

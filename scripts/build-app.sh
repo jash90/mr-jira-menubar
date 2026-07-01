@@ -6,8 +6,8 @@ set -euo pipefail
 APP_NAME="MR Jira Menu Bar"
 EXECUTABLE="MRJiraMenuBar"
 BUNDLE_ID="com.raccoonsoftware.mrjiramenubar"
-VERSION="1.0.0"
-SHORT_VERSION="1.0"
+VERSION="1.0.1"
+SHORT_VERSION="1.0.1"
 MIN_MACOS="13.0"
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -45,8 +45,26 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 </plist>
 PLIST
 
-# Ad-hoc sign so locally-built bundle launches cleanly.
-codesign --force --deep --sign - "$APP" >/dev/null 2>&1 || echo "   (codesign skipped)"
+# Sign with a real Developer ID Application certificate so the app runs on other
+# Macs without Gatekeeper warnings. Override with SIGN_IDENTITY=<name or SHA-1>;
+# if unset, auto-pick the first Developer ID Application identity in the Keychain
+# by its SHA-1 hash (unique even when the cert name appears more than once).
+# Falls back to ad-hoc signing when no Developer ID cert is present.
+SIGN_IDENTITY="${SIGN_IDENTITY:-$(security find-identity -v -p codesigning 2>/dev/null \
+  | awk '/Developer ID Application/{print $2; exit}')}"
+
+if [ -n "$SIGN_IDENTITY" ]; then
+  echo "==> Signing with: $SIGN_IDENTITY"
+  # --options runtime (hardened runtime) + --timestamp are required for notarization.
+  codesign --force --options runtime --timestamp \
+    --sign "$SIGN_IDENTITY" "$APP/Contents/MacOS/$EXECUTABLE"
+  codesign --force --options runtime --timestamp \
+    --sign "$SIGN_IDENTITY" "$APP"
+  codesign --verify --strict --verbose=2 "$APP"
+else
+  echo "==> No Developer ID cert found — ad-hoc signing (local use only)"
+  codesign --force --deep --sign - "$APP" >/dev/null 2>&1 || echo "   (codesign skipped)"
+fi
 
 echo "==> Building $DMG"
 rm -rf "$DMG_STAGE" "$DMG"
@@ -55,6 +73,21 @@ cp -R "$APP" "$DMG_STAGE/"
 ln -s /Applications "$DMG_STAGE/Applications"
 hdiutil create -volname "$APP_NAME" -srcfolder "$DMG_STAGE" -ov -format UDZO "$DMG" >/dev/null
 rm -rf "$DMG_STAGE"
+
+# Notarize + staple so the DMG opens cleanly on other Macs (no "Apple cannot check
+# it for malware" prompt). Needs a one-time notarytool keychain profile:
+#   xcrun notarytool store-credentials mrjira-notary \
+#     --apple-id you@example.com --team-id H2X8YGN869 --password <app-specific-pw>
+# Override the profile name with NOTARY_PROFILE; skipped if it doesn't exist.
+NOTARY_PROFILE="${NOTARY_PROFILE:-mrjira-notary}"
+if [ -n "$SIGN_IDENTITY" ] && xcrun notarytool history --keychain-profile "$NOTARY_PROFILE" >/dev/null 2>&1; then
+  echo "==> Notarizing $DMG (profile: $NOTARY_PROFILE)"
+  xcrun notarytool submit "$DMG" --keychain-profile "$NOTARY_PROFILE" --wait
+  xcrun stapler staple "$DMG"
+else
+  echo "==> Skipping notarization (no '$NOTARY_PROFILE' notarytool profile)."
+  echo "    Developer-ID-signed but un-notarized: others must right-click → Open once."
+fi
 
 echo
 echo "Done."

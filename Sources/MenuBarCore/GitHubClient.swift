@@ -31,16 +31,10 @@ public struct GitHubClient: GitHubFetching, Sendable {
     }
 
     public static func normalizeHost(_ raw: String) -> String {
-        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
-        let withoutScheme = trimmed
-            .replacingOccurrences(of: "https://", with: "")
-            .replacingOccurrences(of: "http://", with: "")
-        let bare = withoutScheme.split(separator: "/").first.map(String.init) ?? withoutScheme
-
+        let bare = normalizedHost(raw)
         if bare == "github.com" || bare == "www.github.com" {
             return "api.github.com"
         }
-
         return bare
     }
 

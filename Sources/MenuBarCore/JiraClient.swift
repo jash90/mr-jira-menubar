@@ -31,7 +31,7 @@ public struct JiraClient: JiraFetching, Sendable {
     let session: URLSession
 
     public init(host: String, token: String, session: URLSession = .shared) {
-        self.host = host
+        self.host = normalizedHost(host)
         self.token = token
         self.session = session
     }

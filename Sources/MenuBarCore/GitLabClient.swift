@@ -29,7 +29,7 @@ public struct GitLabClient: GitLabFetching, Sendable {
     let approvalThreshold: Int
 
     public init(host: String, token: String, session: URLSession = .shared, approvalThreshold: Int = 2) {
-        self.host = host
+        self.host = normalizedHost(host)
         self.token = token
         self.session = session
         self.approvalThreshold = approvalThreshold
