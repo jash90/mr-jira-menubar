@@ -7,13 +7,34 @@ final class StatusFormatterTests: XCTestCase {
             gitlab: SourceResult(value: GitLabCounts(open: 8, ready: 2)),
             jira: SourceResult(value: JiraCounts(backlog: 4, inProgress: 3))
         )
-        XCTAssertEqual(segs.map(\.text), ["8", "2", "4", "3"])
+        XCTAssertEqual(segs.map(\.text), ["8", "2", "4", "3", "0", "0"])
         XCTAssertEqual(segs.map(\.symbol), [
             StatusFormatter.mrSymbol,
             StatusFormatter.readySymbol,
             StatusFormatter.backlogSymbol,
             StatusFormatter.inProgressSymbol,
+            StatusFormatter.testingAwaitingSymbol,
+            StatusFormatter.testingMovedOnSymbol,
         ])
+    }
+
+    func testSegmentsIncludeTestingCounts() {
+        let segs = StatusFormatter.segments(
+            gitlab: SourceResult(value: GitLabCounts(open: 8, ready: 2)),
+            jira: SourceResult(value: JiraCounts(backlog: 4, inProgress: 3, testingAwaiting: 5, testingMovedOn: 11))
+        )
+        XCTAssertEqual(segs.map(\.text), ["8", "2", "4", "3", "5", "11"])
+        XCTAssertEqual(segs[4].symbol, StatusFormatter.testingAwaitingSymbol)
+        XCTAssertEqual(segs[5].symbol, StatusFormatter.testingMovedOnSymbol)
+    }
+
+    func testTooltipMentionsTestingCounts() {
+        let tip = StatusFormatter.tooltip(
+            gitlab: SourceResult(value: GitLabCounts(open: 8, ready: 2)),
+            jira: SourceResult(value: JiraCounts(backlog: 4, inProgress: 3, testingAwaiting: 5, testingMovedOn: 11)),
+            lastRefresh: nil
+        )
+        XCTAssertTrue(tip.contains("Testy: 5 czeka, 11 przetestowane"))
     }
 
     func testSegmentsShowDashForErroredSource() {
@@ -97,7 +118,7 @@ final class StatusFormatterTests: XCTestCase {
             jira: SourceResult(value: JiraCounts(backlog: 4, inProgress: 1)),
             visibility: SourceVisibility(gitlab: true, github: true, jira: true)
         )
-        XCTAssertEqual(segs.map(\.text), ["8", "2", "5", "3", "4", "1"])
+        XCTAssertEqual(segs.map(\.text), ["8", "2", "5", "3", "4", "1", "0", "0"])
         XCTAssertEqual(segs[2].symbol, StatusFormatter.githubOpenSymbol)
         XCTAssertEqual(segs[3].symbol, StatusFormatter.githubReadySymbol)
     }
@@ -109,7 +130,7 @@ final class StatusFormatterTests: XCTestCase {
             jira: SourceResult(value: JiraCounts(backlog: 4, inProgress: 1)),
             visibility: SourceVisibility(gitlab: true, github: false, jira: true)
         )
-        XCTAssertEqual(segs.map(\.text), ["8", "2", "4", "1"])
+        XCTAssertEqual(segs.map(\.text), ["8", "2", "4", "1", "0", "0"])
     }
 
     func testTooltipIncludesGitHubWhenVisible() {

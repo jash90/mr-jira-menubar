@@ -9,7 +9,14 @@ public struct GitLabCounts: Equatable {
 public struct JiraCounts: Equatable {
     public let backlog: Int
     public let inProgress: Int
-    public init(backlog: Int, inProgress: Int) { self.backlog = backlog; self.inProgress = inProgress }
+    public let testingAwaiting: Int
+    public let testingMovedOn: Int
+    public init(backlog: Int, inProgress: Int, testingAwaiting: Int = 0, testingMovedOn: Int = 0) {
+        self.backlog = backlog
+        self.inProgress = inProgress
+        self.testingAwaiting = testingAwaiting
+        self.testingMovedOn = testingMovedOn
+    }
 }
 
 public struct GitHubCounts: Equatable {
@@ -145,7 +152,13 @@ public final class StatusStore {
         do {
             async let backlog = jiraClient.backlogCount()
             async let inProgress = jiraClient.inProgressCount()
-            let counts = JiraCounts(backlog: try await backlog, inProgress: try await inProgress)
+            async let testingAwaiting = jiraClient.testingAwaitingCount()
+            async let testingMovedOn = jiraClient.testingMovedOnCount()
+            let counts = JiraCounts(
+                backlog: try await backlog,
+                inProgress: try await inProgress,
+                testingAwaiting: try await testingAwaiting,
+                testingMovedOn: try await testingMovedOn)
 
             if Task.isCancelled { return }
 

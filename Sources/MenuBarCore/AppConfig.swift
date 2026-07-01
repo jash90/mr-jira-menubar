@@ -7,7 +7,8 @@ public func normalizedHost(_ raw: String) -> String {
     let withoutScheme = trimmed
         .replacingOccurrences(of: "https://", with: "")
         .replacingOccurrences(of: "http://", with: "")
-    return withoutScheme.split(separator: "/").first.map(String.init) ?? ""
+    let authority = withoutScheme.split(separator: "/").first.map(String.init) ?? ""
+    return authority.split(separator: "@").last.map(String.init) ?? authority
 }
 
 public struct AppConfig: Equatable, Sendable {

@@ -40,6 +40,8 @@ private final class MutableJira: JiraFetching, @unchecked Sendable {
     }
     func backlogCount() async throws -> Int { try backlog.get() }
     func inProgressCount() async throws -> Int { try inProgress.get() }
+    func testingAwaitingCount() async throws -> Int { 0 }
+    func testingMovedOnCount() async throws -> Int { 0 }
 }
 
 private struct FakeGitHub: GitHubFetching {

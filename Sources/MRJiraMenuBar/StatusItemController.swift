@@ -11,26 +11,26 @@ final class StatusItemController: NSObject {
     var githubWebHost = "github.com" { didSet { githubWebHost = normalizedHost(githubWebHost) } }
     private var isNeedsConfig = false
 
-    private var mrDashboardURL: URL {
-        URL(string: "https://\(gitlabHost)/dashboard/merge_requests?scope=created_by_me&state=opened")!
+    private var mrDashboardURL: URL? {
+        URL(string: "https://\(gitlabHost)/dashboard/merge_requests?scope=created_by_me&state=opened")
     }
 
-    private func jiraURL(_ jql: String) -> URL {
+    private func jiraURL(_ jql: String) -> URL? {
         var comps = URLComponents()
         comps.scheme = "https"
         comps.host = jiraHost
         comps.path = "/issues/"
         comps.queryItems = [.init(name: "jql", value: jql)]
-        return comps.url!
+        return comps.url
     }
 
-    private var githubPRsURL: URL {
+    private var githubPRsURL: URL? {
         var comps = URLComponents()
         comps.scheme = "https"
         comps.host = githubWebHost
         comps.path = "/pulls"
         comps.queryItems = [.init(name: "q", value: "is:open is:pr author:@me")]
-        return comps.url!
+        return comps.url
     }
 
     func markConfigured() {
@@ -119,8 +119,12 @@ final class StatusItemController: NSObject {
             menu.addItem(header("Jira"))
             let backlogText = jira.value.map { String($0.backlog) } ?? (jira.error != nil ? "—" : "…")
             let progText = jira.value.map { String($0.inProgress) } ?? (jira.error != nil ? "—" : "…")
+            let awaitingText = jira.value.map { String($0.testingAwaiting) } ?? (jira.error != nil ? "—" : "…")
+            let movedText = jira.value.map { String($0.testingMovedOn) } ?? (jira.error != nil ? "—" : "…")
             menu.addItem(link("  Backlog: \(backlogText)", url: jiraURL(JiraClient.backlogJQL)))
             menu.addItem(link("  W toku: \(progText)", url: jiraURL(JiraClient.inProgressJQL)))
+            menu.addItem(link("  W testach — czeka: \(awaitingText)", url: jiraURL(JiraClient.testingAwaitingJQL)))
+            menu.addItem(link("  Przetestowane: \(movedText)", url: jiraURL(JiraClient.testingMovedOnJQL)))
             if let e = jira.error { menu.addItem(NSMenuItem(title: "  Błąd: \(e)", action: nil, keyEquivalent: "")) }
 
             menu.addItem(.separator())
@@ -149,7 +153,11 @@ final class StatusItemController: NSObject {
         return item
     }
 
-    private func link(_ title: String, url: URL) -> NSMenuItem {
+    private func link(_ title: String, url: URL?) -> NSMenuItem {
+        guard let url else {
+            return NSMenuItem(title: title, action: nil, keyEquivalent: "")
+        }
+
         let item = NSMenuItem(title: title, action: #selector(openLink(_:)), keyEquivalent: "")
         item.target = self
         item.representedObject = url

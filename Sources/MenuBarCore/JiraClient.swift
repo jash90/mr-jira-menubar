@@ -3,6 +3,8 @@ import Foundation
 public protocol JiraFetching: Sendable {
     func backlogCount() async throws -> Int
     func inProgressCount() async throws -> Int
+    func testingAwaitingCount() async throws -> Int
+    func testingMovedOnCount() async throws -> Int
 }
 
 public enum JiraError: Error, Equatable, CustomStringConvertible {
@@ -25,6 +27,11 @@ public struct JiraClient: JiraFetching, Sendable {
         #"assignee = currentUser() AND resolution = Unresolved AND status in ("To Do", "Backlog")"#
     public static let inProgressJQL =
         #"assignee = currentUser() AND resolution = Unresolved AND status = "In Progress""#
+    public static let testingStatus = "Internal testing"
+    public static let testingAwaitingJQL =
+        #"status CHANGED TO "Internal testing" BY currentUser() AND status = "Internal testing""#
+    public static let testingMovedOnJQL =
+        #"status CHANGED TO "Internal testing" BY currentUser() AND status != "Internal testing""#
 
     public let host: String
     let token: String
@@ -57,4 +64,6 @@ public struct JiraClient: JiraFetching, Sendable {
 
     public func backlogCount() async throws -> Int { try await count(jql: Self.backlogJQL) }
     public func inProgressCount() async throws -> Int { try await count(jql: Self.inProgressJQL) }
+    public func testingAwaitingCount() async throws -> Int { try await count(jql: Self.testingAwaitingJQL) }
+    public func testingMovedOnCount() async throws -> Int { try await count(jql: Self.testingMovedOnJQL) }
 }

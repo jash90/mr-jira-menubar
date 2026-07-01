@@ -27,6 +27,8 @@ public enum StatusFormatter {
     public static let readySymbol = "checkmark.seal"
     public static let backlogSymbol = "tray.full"
     public static let inProgressSymbol = "bolt"
+    public static let testingAwaitingSymbol = "hourglass"
+    public static let testingMovedOnSymbol = "checkmark.diamond"
     public static let errorSymbol = "exclamationmark.triangle"
     public static let githubOpenSymbol = "arrow.triangle.pull"
     public static let githubReadySymbol = "checkmark.circle"
@@ -72,6 +74,8 @@ public enum StatusFormatter {
             let e = jira.error != nil
             result.append(segment(symbol: backlogSymbol, value: jira.value.map { String($0.backlog) }, hasError: e))
             result.append(segment(symbol: inProgressSymbol, value: jira.value.map { String($0.inProgress) }, hasError: e))
+            result.append(segment(symbol: testingAwaitingSymbol, value: jira.value.map { String($0.testingAwaiting) }, hasError: e))
+            result.append(segment(symbol: testingMovedOnSymbol, value: jira.value.map { String($0.testingMovedOn) }, hasError: e))
         }
 
         return result
@@ -109,6 +113,7 @@ public enum StatusFormatter {
         if visibility.jira {
             if let j = jira.value {
                 parts.append("Jira: \(j.backlog) backlog, \(j.inProgress) w toku")
+                parts.append("Testy: \(j.testingAwaiting) czeka, \(j.testingMovedOn) przetestowane")
             }
 
             if let e = jira.error {
