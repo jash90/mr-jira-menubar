@@ -59,6 +59,78 @@ final class JiraClientTests: XCTestCase {
         )
     }
 
+    // Scenario like SOFKRS-7983: reviewer moves the ticket to testing, but the tested work
+    // is mine — the developer is the author of the last move to Code review before testing.
+    func testDeveloperOfLastTestingRoundIsCodeReviewAuthor() {
+        let transitions = [
+            StatusTransition(author: "me", toStatus: "In Progress"),
+            StatusTransition(author: "me", toStatus: "Code review"),
+            StatusTransition(author: "reviewer", toStatus: "Internal testing"),
+            StatusTransition(author: "tester", toStatus: "In Progress"),
+        ]
+        XCTAssertEqual(JiraClient.developerOfLastTestingRound(transitions), "me")
+    }
+
+    // Scenario like SOFKRS-6260: someone else's round got rejected, I took the ticket over
+    // afterwards — my transitions after the last testing round must not count.
+    func testDeveloperOfLastTestingRoundIgnoresTakeoverAfterRejection() {
+        let transitions = [
+            StatusTransition(author: "other.dev", toStatus: "In Progress"),
+            StatusTransition(author: "other.dev", toStatus: "Code review"),
+            StatusTransition(author: "reviewer", toStatus: "Internal testing"),
+            StatusTransition(author: "tester", toStatus: "In Progress"),
+            StatusTransition(author: "me", toStatus: "In Progress"),
+            StatusTransition(author: "me", toStatus: "Code review"),
+        ]
+        XCTAssertEqual(JiraClient.developerOfLastTestingRound(transitions), "other.dev")
+    }
+
+    func testDeveloperOfLastTestingRoundFallsBackToTestingTransitionAuthor() {
+        let transitions = [
+            StatusTransition(author: "me", toStatus: "In Progress"),
+            StatusTransition(author: "me", toStatus: "Internal testing"),
+            StatusTransition(author: "tester", toStatus: "Acceptance"),
+        ]
+        XCTAssertEqual(JiraClient.developerOfLastTestingRound(transitions), "me")
+    }
+
+    func testDeveloperOfLastTestingRoundIsNilWithoutTestingTransition() {
+        let transitions = [
+            StatusTransition(author: "me", toStatus: "In Progress"),
+            StatusTransition(author: "me", toStatus: "Code review"),
+        ]
+        XCTAssertNil(JiraClient.developerOfLastTestingRound(transitions))
+    }
+
+    func testRejectedCountFiltersOutOtherDevelopersRounds() async throws {
+        StubURLProtocol.handler = { req in
+            if req.url!.path == "/rest/api/2/myself" {
+                return .init(statusCode: 200, body: Data(#"{"name":"me"}"#.utf8))
+            }
+
+            XCTAssertEqual(req.url!.path, "/rest/api/2/search")
+            XCTAssertTrue(req.url!.query!.contains("expand=changelog"))
+            let mine = #"""
+                {"changelog":{"histories":[
+                {"author":{"name":"me"},"items":[{"field":"status","toString":"Code review"}]},
+                {"author":{"name":"reviewer"},"items":[{"field":"status","toString":"Internal testing"}]},
+                {"author":{"name":"tester"},"items":[{"field":"status","toString":"In Progress"}]}]}}
+                """#
+            let takenOver = #"""
+                {"changelog":{"histories":[
+                {"author":{"name":"other.dev"},"items":[{"field":"status","toString":"Code review"}]},
+                {"author":{"name":"reviewer"},"items":[{"field":"status","toString":"Internal testing"}]},
+                {"author":{"name":"tester"},"items":[{"field":"status","toString":"In Progress"}]},
+                {"author":{"name":"me"},"items":[{"field":"status","toString":"Code review"}]}]}}
+                """#
+            let body = #"{"issues":["# + mine + "," + takenOver + "]}"
+            return .init(statusCode: 200, body: Data(body.utf8))
+        }
+        let client = JiraClient(host: "jira.example", token: "tok", session: StubURLProtocol.session())
+        let count = try await client.testingRejectedCount()
+        XCTAssertEqual(count, 1)
+    }
+
     func testCountThrowsStatusOn401() async {
         StubURLProtocol.handler = { _ in .init(statusCode: 401) }
         let client = JiraClient(host: "jira.example", token: "tok", session: StubURLProtocol.session())
