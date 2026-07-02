@@ -10,12 +10,14 @@ public struct JiraCounts: Equatable {
     public let backlog: Int
     public let inProgress: Int
     public let testingAwaiting: Int
-    public let testingMovedOn: Int
-    public init(backlog: Int, inProgress: Int, testingAwaiting: Int = 0, testingMovedOn: Int = 0) {
+    public let testingAccepted: Int
+    public let testingRejected: Int
+    public init(backlog: Int, inProgress: Int, testingAwaiting: Int = 0, testingAccepted: Int = 0, testingRejected: Int = 0) {
         self.backlog = backlog
         self.inProgress = inProgress
         self.testingAwaiting = testingAwaiting
-        self.testingMovedOn = testingMovedOn
+        self.testingAccepted = testingAccepted
+        self.testingRejected = testingRejected
     }
 }
 
@@ -153,12 +155,14 @@ public final class StatusStore {
             async let backlog = jiraClient.backlogCount()
             async let inProgress = jiraClient.inProgressCount()
             async let testingAwaiting = jiraClient.testingAwaitingCount()
-            async let testingMovedOn = jiraClient.testingMovedOnCount()
+            async let testingAccepted = jiraClient.testingAcceptedCount()
+            async let testingRejected = jiraClient.testingRejectedCount()
             let counts = JiraCounts(
                 backlog: try await backlog,
                 inProgress: try await inProgress,
                 testingAwaiting: try await testingAwaiting,
-                testingMovedOn: try await testingMovedOn)
+                testingAccepted: try await testingAccepted,
+                testingRejected: try await testingRejected)
 
             if Task.isCancelled { return }
 

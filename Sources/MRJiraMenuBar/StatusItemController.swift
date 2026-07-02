@@ -120,11 +120,13 @@ final class StatusItemController: NSObject {
             let backlogText = jira.value.map { String($0.backlog) } ?? (jira.error != nil ? "—" : "…")
             let progText = jira.value.map { String($0.inProgress) } ?? (jira.error != nil ? "—" : "…")
             let awaitingText = jira.value.map { String($0.testingAwaiting) } ?? (jira.error != nil ? "—" : "…")
-            let movedText = jira.value.map { String($0.testingMovedOn) } ?? (jira.error != nil ? "—" : "…")
+            let acceptedText = jira.value.map { String($0.testingAccepted) } ?? (jira.error != nil ? "—" : "…")
+            let rejectedText = jira.value.map { String($0.testingRejected) } ?? (jira.error != nil ? "—" : "…")
             menu.addItem(link("  Backlog: \(backlogText)", url: jiraURL(JiraClient.backlogJQL)))
             menu.addItem(link("  W toku: \(progText)", url: jiraURL(JiraClient.inProgressJQL)))
             menu.addItem(link("  W testach — czeka: \(awaitingText)", url: jiraURL(JiraClient.testingAwaitingJQL)))
-            menu.addItem(link("  Przetestowane: \(movedText)", url: jiraURL(JiraClient.testingMovedOnJQL)))
+            menu.addItem(link("  Zaakceptowane: \(acceptedText)", url: jiraURL(JiraClient.testingAcceptedJQL)))
+            menu.addItem(link("  Odrzucone: \(rejectedText)", url: jiraURL(JiraClient.testingRejectedJQL)))
             if let e = jira.error { menu.addItem(NSMenuItem(title: "  Błąd: \(e)", action: nil, keyEquivalent: "")) }
 
             menu.addItem(.separator())

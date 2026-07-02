@@ -4,7 +4,8 @@ public protocol JiraFetching: Sendable {
     func backlogCount() async throws -> Int
     func inProgressCount() async throws -> Int
     func testingAwaitingCount() async throws -> Int
-    func testingMovedOnCount() async throws -> Int
+    func testingAcceptedCount() async throws -> Int
+    func testingRejectedCount() async throws -> Int
 }
 
 public enum JiraError: Error, Equatable, CustomStringConvertible {
@@ -28,10 +29,20 @@ public struct JiraClient: JiraFetching, Sendable {
     public static let inProgressJQL =
         #"assignee = currentUser() AND resolution = Unresolved AND status = "In Progress""#
     public static let testingStatus = "Internal testing"
+    // "My" tickets need both signals: the move to testing may be clicked by someone else
+    // (then only assignee matches), and after acceptance the assignee changes
+    // (then only the transition author matches).
+    static let myTestedIssues =
+        #"(assignee = currentUser() OR status CHANGED TO "Internal testing" BY currentUser()) AND status CHANGED TO "Internal testing""#
+    // Rejected = sent back to a pre-testing status; accepted = moved forward
+    // (Acceptance, Accepted, Done, …) — testers accept via "Acceptance", not straight to Done.
+    static let preTestingStatuses = #""Backlog", "To Do", "New", "In Progress", "Code review""#
     public static let testingAwaitingJQL =
-        #"status CHANGED TO "Internal testing" BY currentUser() AND status = "Internal testing""#
-    public static let testingMovedOnJQL =
-        #"status CHANGED TO "Internal testing" BY currentUser() AND status != "Internal testing""#
+        myTestedIssues + #" AND status = "Internal testing""#
+    public static let testingAcceptedJQL =
+        myTestedIssues + #" AND status not in ("Internal testing", "# + preTestingStatuses + ")"
+    public static let testingRejectedJQL =
+        myTestedIssues + " AND status in (" + preTestingStatuses + ")"
 
     public let host: String
     let token: String
@@ -65,5 +76,6 @@ public struct JiraClient: JiraFetching, Sendable {
     public func backlogCount() async throws -> Int { try await count(jql: Self.backlogJQL) }
     public func inProgressCount() async throws -> Int { try await count(jql: Self.inProgressJQL) }
     public func testingAwaitingCount() async throws -> Int { try await count(jql: Self.testingAwaitingJQL) }
-    public func testingMovedOnCount() async throws -> Int { try await count(jql: Self.testingMovedOnJQL) }
+    public func testingAcceptedCount() async throws -> Int { try await count(jql: Self.testingAcceptedJQL) }
+    public func testingRejectedCount() async throws -> Int { try await count(jql: Self.testingRejectedJQL) }
 }

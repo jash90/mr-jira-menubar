@@ -38,6 +38,27 @@ final class JiraClientTests: XCTestCase {
         )
     }
 
+    func testTestingAwaitingJQLMatchesSpec() {
+        XCTAssertEqual(
+            JiraClient.testingAwaitingJQL,
+            #"(assignee = currentUser() OR status CHANGED TO "Internal testing" BY currentUser()) AND status CHANGED TO "Internal testing" AND status = "Internal testing""#
+        )
+    }
+
+    func testTestingAcceptedJQLMatchesSpec() {
+        XCTAssertEqual(
+            JiraClient.testingAcceptedJQL,
+            #"(assignee = currentUser() OR status CHANGED TO "Internal testing" BY currentUser()) AND status CHANGED TO "Internal testing" AND status not in ("Internal testing", "Backlog", "To Do", "New", "In Progress", "Code review")"#
+        )
+    }
+
+    func testTestingRejectedJQLMatchesSpec() {
+        XCTAssertEqual(
+            JiraClient.testingRejectedJQL,
+            #"(assignee = currentUser() OR status CHANGED TO "Internal testing" BY currentUser()) AND status CHANGED TO "Internal testing" AND status in ("Backlog", "To Do", "New", "In Progress", "Code review")"#
+        )
+    }
+
     func testCountThrowsStatusOn401() async {
         StubURLProtocol.handler = { _ in .init(statusCode: 401) }
         let client = JiraClient(host: "jira.example", token: "tok", session: StubURLProtocol.session())
