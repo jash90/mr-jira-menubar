@@ -10,6 +10,16 @@ struct SettingsView: View {
         self.onSave = onSave
     }
 
+    private func counterToggle(_ counter: StatusCounter) -> Binding<Bool> {
+        Binding(
+            get: { config.enabledCounters.contains(counter) },
+            set: { isOn in
+                if isOn { config.enabledCounters.insert(counter) }
+                else { config.enabledCounters.remove(counter) }
+            }
+        )
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Ustawienia").font(.headline)
@@ -41,6 +51,27 @@ struct SettingsView: View {
                     }
                     .disabled(!config.githubEnabled)
                 }.padding(6)
+            }
+
+            GroupBox("Liczniki na pasku") {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("GitLab").font(.subheadline).foregroundStyle(.secondary)
+                    Toggle("Otwarte MR", isOn: counterToggle(.gitlabOpen))
+                    Toggle("Gotowe do mergu", isOn: counterToggle(.gitlabReady))
+
+                    Text("GitHub").font(.subheadline).foregroundStyle(.secondary)
+                    Toggle("Otwarte PR", isOn: counterToggle(.githubOpen))
+                    Toggle("Approved", isOn: counterToggle(.githubApproved))
+
+                    Text("Jira").font(.subheadline).foregroundStyle(.secondary)
+                    Toggle("Backlog", isOn: counterToggle(.jiraBacklog))
+                    Toggle("W toku", isOn: counterToggle(.jiraInProgress))
+                    Toggle("W testach — czeka", isOn: counterToggle(.jiraTestingAwaiting))
+                    Toggle("Zaakceptowane", isOn: counterToggle(.jiraTestingAccepted))
+                    Toggle("Odrzucone", isOn: counterToggle(.jiraTestingRejected))
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(6)
             }
 
             HStack {

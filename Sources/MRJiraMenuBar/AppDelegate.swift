@@ -22,7 +22,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 github: self.store.github,
                 jira: self.store.jira,
                 lastRefresh: self.store.lastRefresh,
-                visibility: self.visibility
+                visibility: self.visibility,
+                enabledCounters: self.settings.config.enabledCounters
             )
         }
         controller.onRefresh = { [weak self] in self?.store.refreshNow() }

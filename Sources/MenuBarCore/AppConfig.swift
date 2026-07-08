@@ -20,6 +20,7 @@ public struct AppConfig: Equatable, Sendable {
     public var githubToken: String
     public var gitlabEnabled: Bool
     public var githubEnabled: Bool
+    public var enabledCounters: Set<StatusCounter>
 
     public static let defaultGitLabHost = ""
     public static let defaultJiraHost = ""
@@ -33,7 +34,8 @@ public struct AppConfig: Equatable, Sendable {
         githubHost: String = defaultGitHubHost,
         githubToken: String = "",
         gitlabEnabled: Bool = true,
-        githubEnabled: Bool = true
+        githubEnabled: Bool = true,
+        enabledCounters: Set<StatusCounter> = Set(StatusCounter.allCases)
     ) {
         self.gitlabHost = gitlabHost
         self.gitlabToken = gitlabToken
@@ -43,6 +45,7 @@ public struct AppConfig: Equatable, Sendable {
         self.githubToken = githubToken
         self.gitlabEnabled = gitlabEnabled
         self.githubEnabled = githubEnabled
+        self.enabledCounters = enabledCounters
     }
 
     public var gitlabActive: Bool { gitlabEnabled && !gitlabHost.isEmpty && !gitlabToken.isEmpty }

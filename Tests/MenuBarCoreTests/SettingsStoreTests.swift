@@ -63,6 +63,20 @@ final class SettingsStoreTests: XCTestCase {
         XCTAssertFalse(c.githubActive)
     }
 
+    func testEnabledCountersDefaultAllAndPersist() throws {
+        let secrets = InMemorySecretStore()
+        let defaults = freshDefaults(#function)
+        let store = SettingsStore(secrets: secrets, defaults: defaults)
+        XCTAssertEqual(store.config.enabledCounters, Set(StatusCounter.allCases))
+
+        var c = store.config
+        c.enabledCounters = [.gitlabOpen, .jiraBacklog]
+        try store.save(c)
+
+        let reloaded = SettingsStore(secrets: secrets, defaults: defaults)
+        XCTAssertEqual(reloaded.config.enabledCounters, [.gitlabOpen, .jiraBacklog])
+    }
+
     func testEnabledFlagsDefaultTrueAndPersist() throws {
         let secrets = InMemorySecretStore()
         let defaults = freshDefaults(#function)

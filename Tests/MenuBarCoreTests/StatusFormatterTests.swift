@@ -174,4 +174,61 @@ final class StatusFormatterTests: XCTestCase {
         XCTAssertTrue(tip.contains("GitHub: 5 PR, 3 approved"))
         XCTAssertTrue(tip.contains("GitHub błąd: boom"))
     }
+
+    func testStatusCounterHasNineCases() {
+        XCTAssertEqual(StatusCounter.allCases.count, 9)
+    }
+
+    func testSegmentsRespectEnabledCounters() {
+        let enabled: Set<StatusCounter> = [.gitlabOpen, .jiraBacklog]
+        let segs = StatusFormatter.segments(
+            gitlab: SourceResult(value: GitLabCounts(open: 8, ready: 2)),
+            github: SourceResult(value: GitHubCounts(open: 5, approved: 3)),
+            jira: SourceResult(value: JiraCounts(backlog: 4, inProgress: 1, testingAwaiting: 2, testingAccepted: 6, testingRejected: 1)),
+            visibility: SourceVisibility(gitlab: true, github: true, jira: true),
+            enabledCounters: enabled
+        )
+        XCTAssertEqual(segs.map(\.symbol), [StatusFormatter.mrSymbol, StatusFormatter.backlogSymbol])
+        XCTAssertEqual(segs.map(\.text), ["8", "4"])
+    }
+
+    func testSegmentsEmptyWhenAllCountersDisabled() {
+        let segs = StatusFormatter.segments(
+            gitlab: SourceResult(value: GitLabCounts(open: 8, ready: 2)),
+            jira: SourceResult(value: JiraCounts(backlog: 4, inProgress: 3)),
+            enabledCounters: []
+        )
+        XCTAssertTrue(segs.isEmpty)
+    }
+
+    func testConnectionFailureNilWhenNoErrors() {
+        let banner = StatusFormatter.connectionFailure(
+            gitlab: SourceResult(value: GitLabCounts(open: 8, ready: 2)),
+            jira: SourceResult(value: JiraCounts(backlog: 4, inProgress: 3))
+        )
+        XCTAssertNil(banner)
+    }
+
+    func testConnectionFailureListsErroredVisibleSources() {
+        let banner = StatusFormatter.connectionFailure(
+            gitlab: SourceResult(value: GitLabCounts(open: 8, ready: 2)),
+            github: SourceResult(value: nil, error: "boom"),
+            jira: SourceResult(value: nil, error: "jira-boom"),
+            visibility: SourceVisibility(gitlab: true, github: true, jira: true)
+        )
+        XCTAssertNotNil(banner)
+        XCTAssertTrue(banner!.contains("GitHub"))
+        XCTAssertTrue(banner!.contains("Jira"))
+        XCTAssertFalse(banner!.contains("GitLab"))
+    }
+
+    func testConnectionFailureIgnoresHiddenSources() {
+        let banner = StatusFormatter.connectionFailure(
+            gitlab: SourceResult(value: nil, error: "gl-boom"),
+            github: SourceResult(value: nil, error: "gh-boom"),
+            jira: SourceResult(value: JiraCounts(backlog: 4, inProgress: 3)),
+            visibility: SourceVisibility(gitlab: false, github: false, jira: true)
+        )
+        XCTAssertNil(banner)
+    }
 }

@@ -42,12 +42,14 @@ final class StatusItemController: NSObject {
         github: SourceResult<GitHubCounts>,
         jira: SourceResult<JiraCounts>,
         lastRefresh: Date?,
-        visibility: SourceVisibility
+        visibility: SourceVisibility,
+        enabledCounters: Set<StatusCounter>
     ) {
         guard !isNeedsConfig, let button = statusItem.button else { return }
 
-        button.attributedTitle = Self.attributedTitle(
-            StatusFormatter.segments(gitlab: gitlab, github: github, jira: jira, visibility: visibility))
+        let segments = StatusFormatter.segments(
+            gitlab: gitlab, github: github, jira: jira, visibility: visibility, enabledCounters: enabledCounters)
+        button.attributedTitle = Self.attributedTitle(segments)
         button.toolTip = StatusFormatter.tooltip(
             gitlab: gitlab, github: github, jira: jira, lastRefresh: lastRefresh, visibility: visibility)
         statusItem.menu = buildMenu(gitlab: gitlab, github: github, jira: jira, lastRefresh: lastRefresh, visibility: visibility)
@@ -68,9 +70,23 @@ final class StatusItemController: NSObject {
         statusItem.menu = menu
     }
 
+    static let emptyTitleSymbol = "list.bullet"
+
     static func attributedTitle(_ segments: [TitleSegment]) -> NSAttributedString {
-        let result = NSMutableAttributedString()
         let config = NSImage.SymbolConfiguration(pointSize: 12, weight: .regular)
+
+        guard !segments.isEmpty else {
+            let result = NSMutableAttributedString()
+            if let image = NSImage(systemSymbolName: emptyTitleSymbol, accessibilityDescription: nil)?
+                .withSymbolConfiguration(config) {
+                let attachment = NSTextAttachment()
+                attachment.image = image
+                result.append(NSAttributedString(attachment: attachment))
+            }
+            return result
+        }
+
+        let result = NSMutableAttributedString()
         for (i, seg) in segments.enumerated() {
             if let image = NSImage(systemSymbolName: seg.symbol, accessibilityDescription: nil)?
                 .withSymbolConfiguration(config) {
