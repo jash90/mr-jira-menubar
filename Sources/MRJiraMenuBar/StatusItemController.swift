@@ -6,6 +6,7 @@ final class StatusItemController: NSObject {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     var onRefresh: (() -> Void)?
     var onOpenSettings: (() -> Void)?
+    var onDownloadUpdate: ((ReleaseInfo) -> Void)?
     var gitlabHost = AppConfig.defaultGitLabHost { didSet { gitlabHost = normalizedHost(gitlabHost) } }
     var jiraHost = AppConfig.defaultJiraHost { didSet { jiraHost = normalizedHost(jiraHost) } }
     var githubWebHost = "github.com" { didSet { githubWebHost = normalizedHost(githubWebHost) } }
@@ -42,15 +43,19 @@ final class StatusItemController: NSObject {
         github: SourceResult<GitHubCounts>,
         jira: SourceResult<JiraCounts>,
         lastRefresh: Date?,
-        visibility: SourceVisibility
+        visibility: SourceVisibility,
+        enabledCounters: Set<StatusCounter>,
+        update: ReleaseInfo?
     ) {
         guard !isNeedsConfig, let button = statusItem.button else { return }
 
-        button.attributedTitle = Self.attributedTitle(
-            StatusFormatter.segments(gitlab: gitlab, github: github, jira: jira, visibility: visibility))
+        let segments = StatusFormatter.segments(
+            gitlab: gitlab, github: github, jira: jira, visibility: visibility, enabledCounters: enabledCounters)
+        button.attributedTitle = Self.attributedTitle(segments)
         button.toolTip = StatusFormatter.tooltip(
             gitlab: gitlab, github: github, jira: jira, lastRefresh: lastRefresh, visibility: visibility)
-        statusItem.menu = buildMenu(gitlab: gitlab, github: github, jira: jira, lastRefresh: lastRefresh, visibility: visibility)
+        statusItem.menu = buildMenu(
+            gitlab: gitlab, github: github, jira: jira, lastRefresh: lastRefresh, visibility: visibility, update: update)
     }
 
     func showError(_ message: String) {
@@ -68,18 +73,39 @@ final class StatusItemController: NSObject {
         statusItem.menu = menu
     }
 
+    static let emptyTitleSymbol = "list.bullet"
+
     static func attributedTitle(_ segments: [TitleSegment]) -> NSAttributedString {
-        let result = NSMutableAttributedString()
         let config = NSImage.SymbolConfiguration(pointSize: 12, weight: .regular)
+
+        guard !segments.isEmpty else {
+            let result = NSMutableAttributedString()
+            if let image = NSImage(systemSymbolName: emptyTitleSymbol, accessibilityDescription: nil)?
+                .withSymbolConfiguration(config) {
+                let attachment = NSTextAttachment()
+                attachment.image = image
+                result.append(NSAttributedString(attachment: attachment))
+            }
+            return result
+        }
+
+        let result = NSMutableAttributedString()
         for (i, seg) in segments.enumerated() {
+            let start = result.length
+
             if let image = NSImage(systemSymbolName: seg.symbol, accessibilityDescription: nil)?
                 .withSymbolConfiguration(config) {
+                image.isTemplate = seg.isError
                 let attachment = NSTextAttachment()
                 attachment.image = image
                 result.append(NSAttributedString(attachment: attachment))
             }
             let trailing = (i < segments.count - 1) ? "  " : ""
             result.append(NSAttributedString(string: " \(seg.text)\(trailing)"))
+
+            if seg.isError {
+                result.addAttribute(.foregroundColor, value: NSColor.systemRed, range: NSRange(location: start, length: result.length - start))
+            }
         }
         return result
     }
@@ -89,9 +115,20 @@ final class StatusItemController: NSObject {
         github: SourceResult<GitHubCounts>,
         jira: SourceResult<JiraCounts>,
         lastRefresh: Date?,
-        visibility: SourceVisibility
+        visibility: SourceVisibility,
+        update: ReleaseInfo?
     ) -> NSMenu {
         let menu = NSMenu()
+
+        if let failure = StatusFormatter.connectionFailure(gitlab: gitlab, github: github, jira: jira, visibility: visibility) {
+            menu.addItem(connectionFailureBanner(failure))
+            menu.addItem(.separator())
+        }
+
+        if let update {
+            menu.addItem(updateItem(update))
+            menu.addItem(.separator())
+        }
 
         if visibility.gitlab {
             menu.addItem(header("GitLab — moje MR"))
@@ -155,6 +192,41 @@ final class StatusItemController: NSObject {
         return item
     }
 
+    private func updateItem(_ release: ReleaseInfo) -> NSMenuItem {
+        let item = NSMenuItem(
+            title: "Nowa wersja \(release.version) — pobierz",
+            action: #selector(downloadUpdate(_:)),
+            keyEquivalent: "")
+        item.target = self
+        item.representedObject = release
+
+        if let image = NSImage(systemSymbolName: "arrow.down.circle", accessibilityDescription: nil) {
+            image.isTemplate = true
+            item.image = image
+        }
+
+        return item
+    }
+
+    private func connectionFailureBanner(_ message: String) -> NSMenuItem {
+        let item = NSMenuItem(title: message, action: nil, keyEquivalent: "")
+        item.isEnabled = false
+
+        let text = "⚠︎ Nie udało się połączyć (mimo konfiguracji)\n\(message)"
+        let attributed = NSAttributedString(string: text, attributes: [
+            .foregroundColor: NSColor.systemRed,
+            .font: NSFont.menuFont(ofSize: 0),
+        ])
+        item.attributedTitle = attributed
+
+        if let image = NSImage(systemSymbolName: StatusFormatter.errorSymbol, accessibilityDescription: nil) {
+            image.isTemplate = true
+            item.image = image
+        }
+
+        return item
+    }
+
     private func link(_ title: String, url: URL?) -> NSMenuItem {
         guard let url else {
             return NSMenuItem(title: title, action: nil, keyEquivalent: "")
@@ -190,6 +262,10 @@ final class StatusItemController: NSObject {
 
     @objc private func openLink(_ sender: NSMenuItem) {
         if let url = sender.representedObject as? URL { NSWorkspace.shared.open(url) }
+    }
+
+    @objc private func downloadUpdate(_ sender: NSMenuItem) {
+        if let release = sender.representedObject as? ReleaseInfo { onDownloadUpdate?(release) }
     }
 
     @objc private func openSettings() { onOpenSettings?() }

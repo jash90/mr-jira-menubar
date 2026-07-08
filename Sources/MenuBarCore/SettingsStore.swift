@@ -13,9 +13,17 @@ public final class SettingsStore {
     private enum Flag {
         static let gitlabEnabled = "gitlabEnabled"
         static let githubEnabled = "githubEnabled"
+        static let enabledCounters = "enabledCounters"
     }
     private static func loadBool(_ defaults: UserDefaults, _ key: String, default fallback: Bool) -> Bool {
         defaults.object(forKey: key) == nil ? fallback : defaults.bool(forKey: key)
+    }
+    private static func loadCounters(_ defaults: UserDefaults) -> Set<StatusCounter> {
+        guard let raw = defaults.array(forKey: Flag.enabledCounters) as? [String] else {
+            return Set(StatusCounter.allCases)
+        }
+
+        return Set(raw.compactMap(StatusCounter.init(rawValue:)))
     }
 
     private let secrets: SecretStore
@@ -34,7 +42,8 @@ public final class SettingsStore {
             githubHost: secrets.string(forKey: Key.githubHost) ?? AppConfig.defaultGitHubHost,
             githubToken: secrets.string(forKey: Key.githubToken) ?? "",
             gitlabEnabled: Self.loadBool(defaults, Flag.gitlabEnabled, default: true),
-            githubEnabled: Self.loadBool(defaults, Flag.githubEnabled, default: true)
+            githubEnabled: Self.loadBool(defaults, Flag.githubEnabled, default: true),
+            enabledCounters: Self.loadCounters(defaults)
         )
     }
 
@@ -47,6 +56,7 @@ public final class SettingsStore {
         try secrets.set(newConfig.githubToken, forKey: Key.githubToken)
         defaults.set(newConfig.gitlabEnabled, forKey: Flag.gitlabEnabled)
         defaults.set(newConfig.githubEnabled, forKey: Flag.githubEnabled)
+        defaults.set(newConfig.enabledCounters.map(\.rawValue), forKey: Flag.enabledCounters)
         config = newConfig
     }
 }

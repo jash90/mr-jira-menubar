@@ -22,6 +22,13 @@ public struct SourceVisibility: Equatable {
     }
 }
 
+/// Individual menu-bar counters the user can independently show or hide from the title.
+public enum StatusCounter: String, CaseIterable, Sendable {
+    case gitlabOpen, gitlabReady
+    case githubOpen, githubApproved
+    case jiraBacklog, jiraInProgress, jiraTestingAwaiting, jiraTestingAccepted, jiraTestingRejected
+}
+
 public enum StatusFormatter {
     public static let mrSymbol = "arrow.triangle.merge"
     public static let readySymbol = "checkmark.seal"
@@ -55,32 +62,58 @@ public enum StatusFormatter {
         gitlab: SourceResult<GitLabCounts>,
         github: SourceResult<GitHubCounts> = .init(),
         jira: SourceResult<JiraCounts>,
-        visibility: SourceVisibility = .init()
+        visibility: SourceVisibility = .init(),
+        enabledCounters: Set<StatusCounter> = Set(StatusCounter.allCases)
     ) -> [TitleSegment] {
         var result: [TitleSegment] = []
 
+        func append(_ counter: StatusCounter, symbol: String, value: String?, hasError: Bool) {
+            guard enabledCounters.contains(counter) else { return }
+
+            result.append(segment(symbol: symbol, value: value, hasError: hasError))
+        }
+
         if visibility.gitlab {
             let e = gitlab.error != nil
-            result.append(segment(symbol: mrSymbol, value: gitlab.value.map { String($0.open) }, hasError: e))
-            result.append(segment(symbol: readySymbol, value: gitlab.value.map { String($0.ready) }, hasError: e))
+            append(.gitlabOpen, symbol: mrSymbol, value: gitlab.value.map { String($0.open) }, hasError: e)
+            append(.gitlabReady, symbol: readySymbol, value: gitlab.value.map { String($0.ready) }, hasError: e)
         }
 
         if visibility.github {
             let e = github.error != nil
-            result.append(segment(symbol: githubOpenSymbol, value: github.value.map { String($0.open) }, hasError: e))
-            result.append(segment(symbol: githubReadySymbol, value: github.value.map { String($0.approved) }, hasError: e))
+            append(.githubOpen, symbol: githubOpenSymbol, value: github.value.map { String($0.open) }, hasError: e)
+            append(.githubApproved, symbol: githubReadySymbol, value: github.value.map { String($0.approved) }, hasError: e)
         }
 
         if visibility.jira {
             let e = jira.error != nil
-            result.append(segment(symbol: backlogSymbol, value: jira.value.map { String($0.backlog) }, hasError: e))
-            result.append(segment(symbol: inProgressSymbol, value: jira.value.map { String($0.inProgress) }, hasError: e))
-            result.append(segment(symbol: testingAwaitingSymbol, value: jira.value.map { String($0.testingAwaiting) }, hasError: e))
-            result.append(segment(symbol: testingAcceptedSymbol, value: jira.value.map { String($0.testingAccepted) }, hasError: e))
-            result.append(segment(symbol: testingRejectedSymbol, value: jira.value.map { String($0.testingRejected) }, hasError: e))
+            append(.jiraBacklog, symbol: backlogSymbol, value: jira.value.map { String($0.backlog) }, hasError: e)
+            append(.jiraInProgress, symbol: inProgressSymbol, value: jira.value.map { String($0.inProgress) }, hasError: e)
+            append(.jiraTestingAwaiting, symbol: testingAwaitingSymbol, value: jira.value.map { String($0.testingAwaiting) }, hasError: e)
+            append(.jiraTestingAccepted, symbol: testingAcceptedSymbol, value: jira.value.map { String($0.testingAccepted) }, hasError: e)
+            append(.jiraTestingRejected, symbol: testingRejectedSymbol, value: jira.value.map { String($0.testingRejected) }, hasError: e)
         }
 
         return result
+    }
+
+    /// Non-nil when at least one *visible* source is configured but its latest fetch failed —
+    /// i.e. we couldn't connect despite valid configuration. Returns a ready-to-show banner message.
+    public static func connectionFailure(
+        gitlab: SourceResult<GitLabCounts>,
+        github: SourceResult<GitHubCounts> = .init(),
+        jira: SourceResult<JiraCounts>,
+        visibility: SourceVisibility = .init()
+    ) -> String? {
+        var failed: [String] = []
+
+        if visibility.gitlab, gitlab.error != nil { failed.append("GitLab") }
+        if visibility.github, github.error != nil { failed.append("GitHub") }
+        if visibility.jira, jira.error != nil { failed.append("Jira") }
+
+        guard !failed.isEmpty else { return nil }
+
+        return "Nie udało się połączyć: \(failed.joined(separator: ", "))"
     }
 
     public static func tooltip(
