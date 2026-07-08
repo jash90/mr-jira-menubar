@@ -3,11 +3,30 @@ import MenuBarCore
 
 struct SettingsView: View {
     @State private var config: AppConfig
+    @State private var launchAtLogin: Bool
     private let onSave: (AppConfig) -> Void
+    private let setLaunchAtLogin: (Bool) -> Void
 
-    init(config: AppConfig, onSave: @escaping (AppConfig) -> Void) {
+    init(
+        config: AppConfig,
+        launchAtLogin: Bool,
+        onSave: @escaping (AppConfig) -> Void,
+        setLaunchAtLogin: @escaping (Bool) -> Void
+    ) {
         _config = State(initialValue: config)
+        _launchAtLogin = State(initialValue: launchAtLogin)
         self.onSave = onSave
+        self.setLaunchAtLogin = setLaunchAtLogin
+    }
+
+    private var launchAtLoginBinding: Binding<Bool> {
+        Binding(
+            get: { launchAtLogin },
+            set: { newValue in
+                launchAtLogin = newValue
+                setLaunchAtLogin(newValue)
+            }
+        )
     }
 
     private func counterToggle(_ counter: StatusCounter) -> Binding<Bool> {
@@ -23,6 +42,12 @@ struct SettingsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Ustawienia").font(.headline)
+
+            GroupBox("Ogólne") {
+                Toggle("Uruchamiaj przy starcie systemu", isOn: launchAtLoginBinding)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(6)
+            }
 
             GroupBox("GitLab") {
                 VStack(alignment: .leading, spacing: 8) {

@@ -6,18 +6,25 @@ import MenuBarCore
 final class SettingsWindowController {
     private var window: NSWindow?
     var onSave: ((AppConfig) throws -> Void)?
+    var onSetLaunchAtLogin: ((Bool) -> Void)?
 
-    func show(config: AppConfig) {
-        let view = SettingsView(config: config) { [weak self] newConfig in
-            guard let self else { return }
+    func show(config: AppConfig, launchAtLogin: Bool) {
+        let view = SettingsView(
+            config: config,
+            launchAtLogin: launchAtLogin,
+            onSave: { [weak self] newConfig in
+                guard let self else { return }
 
-            do {
-                try self.onSave?(newConfig)
-                self.window?.close()
-            } catch {
-                self.presentSaveError(error)
-            }
-        }
+                do {
+                    try self.onSave?(newConfig)
+                    self.window?.close()
+                } catch {
+                    self.presentSaveError(error)
+                }
+            },
+            setLaunchAtLogin: { [weak self] enabled in
+                self?.onSetLaunchAtLogin?(enabled)
+            })
         let hosting = NSHostingController(rootView: view)
 
         let win = window ?? NSWindow(contentViewController: hosting)

@@ -41,6 +41,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             try self.settings.save(newConfig)
             self.applyConfig()
         }
+        settingsWindow.onSetLaunchAtLogin = { [weak self] enabled in
+            self?.setLaunchAtLogin(enabled)
+        }
 
         applyConfig()
         scheduleUpdateChecks()
@@ -124,7 +127,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    private func setLaunchAtLogin(_ enabled: Bool) {
+        do {
+            try LaunchAtLogin.setEnabled(enabled)
+        } catch {
+            let alert = NSAlert()
+            alert.alertStyle = .warning
+            alert.messageText = "Nie udało się zmienić autostartu"
+            alert.informativeText = """
+            \(error.localizedDescription)
+
+            Autostart działa tylko dla zainstalowanej, podpisanej aplikacji (z DMG w /Applications), \
+            nie podczas uruchamiania przez „swift run".
+            """
+            alert.addButton(withTitle: "OK")
+            alert.runModal()
+        }
+    }
+
     private func openSettings() {
-        settingsWindow.show(config: settings.config)
+        settingsWindow.show(config: settings.config, launchAtLogin: LaunchAtLogin.isEnabled)
     }
 }
