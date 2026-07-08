@@ -95,7 +95,7 @@ final class StatusItemController: NSObject {
 
             if let image = NSImage(systemSymbolName: seg.symbol, accessibilityDescription: nil)?
                 .withSymbolConfiguration(config) {
-                image.isTemplate = seg.isError
+                image.isTemplate = true
                 let attachment = NSTextAttachment()
                 attachment.image = image
                 result.append(NSAttributedString(attachment: attachment))

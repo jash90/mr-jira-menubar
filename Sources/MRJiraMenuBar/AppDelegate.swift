@@ -5,7 +5,7 @@ enum AppInfo {
     /// Bundle version when running as a packaged .app; a dev fallback matching
     /// scripts/build-app.sh's VERSION when launched via `swift run` (no Info.plist).
     static var version: String {
-        (Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String) ?? "1.2.0"
+        (Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String) ?? "1.3.0"
     }
 }
 

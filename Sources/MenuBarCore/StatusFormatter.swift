@@ -31,15 +31,15 @@ public enum StatusCounter: String, CaseIterable, Sendable {
 
 public enum StatusFormatter {
     public static let mrSymbol = "arrow.triangle.merge"
-    public static let readySymbol = "checkmark.seal"
-    public static let backlogSymbol = "tray.full"
-    public static let inProgressSymbol = "bolt"
+    public static let readySymbol = "checkmark.seal.fill"
+    public static let backlogSymbol = "tray.full.fill"
+    public static let inProgressSymbol = "bolt.fill"
     public static let testingAwaitingSymbol = "hourglass"
-    public static let testingAcceptedSymbol = "checkmark.diamond"
-    public static let testingRejectedSymbol = "xmark.diamond"
-    public static let errorSymbol = "exclamationmark.triangle"
+    public static let testingAcceptedSymbol = "checkmark.diamond.fill"
+    public static let testingRejectedSymbol = "xmark.diamond.fill"
+    public static let errorSymbol = "exclamationmark.triangle.fill"
     public static let githubOpenSymbol = "arrow.triangle.pull"
-    public static let githubReadySymbol = "checkmark.circle"
+    public static let githubReadySymbol = "checkmark.circle.fill"
 
     static let errorText = "—"
     static let loadingText = "…"
