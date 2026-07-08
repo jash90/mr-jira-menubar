@@ -63,6 +63,39 @@ final class SettingsStoreTests: XCTestCase {
         XCTAssertFalse(c.githubActive)
     }
 
+    func testSecretsStoredEncryptedUnderSingleItem() throws {
+        let secrets = InMemorySecretStore()
+        let store = SettingsStore(secrets: secrets, defaults: freshDefaults(#function))
+        try store.save(AppConfig(gitlabHost: "gl", gitlabToken: "SUPERSECRET", jiraHost: "jr", jiraToken: "jt"))
+
+        XCTAssertNil(secrets.string(forKey: "gitlabToken"))
+        XCTAssertNil(secrets.string(forKey: "jiraToken"))
+
+        let blob = secrets.string(forKey: "credentials")
+        XCTAssertNotNil(blob)
+        XCTAssertFalse(blob!.contains("SUPERSECRET"))
+        XCTAssertFalse(blob!.contains("gitlabToken"))
+
+        let reloaded = SettingsStore(secrets: secrets, defaults: freshDefaults(#function + "2"))
+        XCTAssertEqual(reloaded.config.gitlabToken, "SUPERSECRET")
+        XCTAssertEqual(reloaded.config.jiraHost, "jr")
+    }
+
+    func testMigratesLegacyPlaintextItems() {
+        let secrets = InMemorySecretStore([
+            "gitlabHost": "gl", "gitlabToken": "gt", "jiraHost": "jr", "jiraToken": "jt",
+        ])
+        let store = SettingsStore(secrets: secrets, defaults: freshDefaults(#function))
+        XCTAssertEqual(store.config.gitlabToken, "gt")
+        XCTAssertTrue(store.config.jiraActive)
+
+        // init auto-consolidates: legacy plaintext gone, single encrypted blob written.
+        XCTAssertNil(secrets.string(forKey: "gitlabToken"))
+        let blob = secrets.string(forKey: "credentials")
+        XCTAssertNotNil(blob)
+        XCTAssertFalse(blob!.contains("gt"))
+    }
+
     func testEnabledCountersDefaultAllAndPersist() throws {
         let secrets = InMemorySecretStore()
         let defaults = freshDefaults(#function)
