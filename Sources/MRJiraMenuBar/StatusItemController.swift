@@ -6,6 +6,7 @@ final class StatusItemController: NSObject {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     var onRefresh: (() -> Void)?
     var onOpenSettings: (() -> Void)?
+    var onDownloadUpdate: ((ReleaseInfo) -> Void)?
     var gitlabHost = AppConfig.defaultGitLabHost { didSet { gitlabHost = normalizedHost(gitlabHost) } }
     var jiraHost = AppConfig.defaultJiraHost { didSet { jiraHost = normalizedHost(jiraHost) } }
     var githubWebHost = "github.com" { didSet { githubWebHost = normalizedHost(githubWebHost) } }
@@ -43,7 +44,8 @@ final class StatusItemController: NSObject {
         jira: SourceResult<JiraCounts>,
         lastRefresh: Date?,
         visibility: SourceVisibility,
-        enabledCounters: Set<StatusCounter>
+        enabledCounters: Set<StatusCounter>,
+        update: ReleaseInfo?
     ) {
         guard !isNeedsConfig, let button = statusItem.button else { return }
 
@@ -52,7 +54,8 @@ final class StatusItemController: NSObject {
         button.attributedTitle = Self.attributedTitle(segments)
         button.toolTip = StatusFormatter.tooltip(
             gitlab: gitlab, github: github, jira: jira, lastRefresh: lastRefresh, visibility: visibility)
-        statusItem.menu = buildMenu(gitlab: gitlab, github: github, jira: jira, lastRefresh: lastRefresh, visibility: visibility)
+        statusItem.menu = buildMenu(
+            gitlab: gitlab, github: github, jira: jira, lastRefresh: lastRefresh, visibility: visibility, update: update)
     }
 
     func showError(_ message: String) {
@@ -112,12 +115,18 @@ final class StatusItemController: NSObject {
         github: SourceResult<GitHubCounts>,
         jira: SourceResult<JiraCounts>,
         lastRefresh: Date?,
-        visibility: SourceVisibility
+        visibility: SourceVisibility,
+        update: ReleaseInfo?
     ) -> NSMenu {
         let menu = NSMenu()
 
         if let failure = StatusFormatter.connectionFailure(gitlab: gitlab, github: github, jira: jira, visibility: visibility) {
             menu.addItem(connectionFailureBanner(failure))
+            menu.addItem(.separator())
+        }
+
+        if let update {
+            menu.addItem(updateItem(update))
             menu.addItem(.separator())
         }
 
@@ -183,6 +192,22 @@ final class StatusItemController: NSObject {
         return item
     }
 
+    private func updateItem(_ release: ReleaseInfo) -> NSMenuItem {
+        let item = NSMenuItem(
+            title: "Nowa wersja \(release.version) — pobierz",
+            action: #selector(downloadUpdate(_:)),
+            keyEquivalent: "")
+        item.target = self
+        item.representedObject = release
+
+        if let image = NSImage(systemSymbolName: "arrow.down.circle", accessibilityDescription: nil) {
+            image.isTemplate = true
+            item.image = image
+        }
+
+        return item
+    }
+
     private func connectionFailureBanner(_ message: String) -> NSMenuItem {
         let item = NSMenuItem(title: message, action: nil, keyEquivalent: "")
         item.isEnabled = false
@@ -237,6 +262,10 @@ final class StatusItemController: NSObject {
 
     @objc private func openLink(_ sender: NSMenuItem) {
         if let url = sender.representedObject as? URL { NSWorkspace.shared.open(url) }
+    }
+
+    @objc private func downloadUpdate(_ sender: NSMenuItem) {
+        if let release = sender.representedObject as? ReleaseInfo { onDownloadUpdate?(release) }
     }
 
     @objc private func openSettings() { onOpenSettings?() }
