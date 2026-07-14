@@ -96,4 +96,38 @@ final class GitLabClientTests: XCTestCase {
         XCTAssertTrue(GitLabError.status(401).description.contains("401"))
         XCTAssertTrue(GitLabError.status(401).description.lowercased().contains("token"))
     }
+
+    func testHasMyMergeRequestSendsSearchQueryAndReadsTotal() async throws {
+        StubURLProtocol.handler = { req in
+            XCTAssertEqual(req.url!.path, "/api/v4/merge_requests")
+            let query = req.url!.query!
+            XCTAssertTrue(query.contains("scope=created_by_me"))
+            XCTAssertTrue(query.contains("state=all"))
+            XCTAssertTrue(query.contains("search=SOFKRS-1234"))
+            XCTAssertTrue(query.contains("created_before=2026-01-10"))
+            return .init(statusCode: 200, headers: ["X-Total": "1"], body: Data("[]".utf8))
+        }
+        let client = GitLabClient(host: "gl.example", token: "tok", session: StubURLProtocol.session())
+        let cutoff = JiraClient.changelogDateFormatter.date(from: "2026-01-10T10:00:00.000+0000")!
+        let found = try await client.hasMyMergeRequest(referencing: "SOFKRS-1234", createdBefore: cutoff)
+        XCTAssertTrue(found)
+    }
+
+    func testHasMyMergeRequestIsFalseOnZeroTotal() async throws {
+        StubURLProtocol.handler = { _ in .init(statusCode: 200, headers: ["X-Total": "0"], body: Data("[]".utf8)) }
+        let client = GitLabClient(host: "gl.example", token: "tok", session: StubURLProtocol.session())
+        let found = try await client.hasMyMergeRequest(referencing: "SOFKRS-1", createdBefore: .distantFuture)
+        XCTAssertFalse(found)
+    }
+
+    func testHasMyMergeRequestThrowsOnHTTPError() async {
+        StubURLProtocol.handler = { _ in .init(statusCode: 500) }
+        let client = GitLabClient(host: "gl.example", token: "tok", session: StubURLProtocol.session())
+        do {
+            _ = try await client.hasMyMergeRequest(referencing: "SOFKRS-1", createdBefore: .distantFuture)
+            XCTFail("expected error")
+        } catch {
+            XCTAssertEqual(error as? GitLabError, .status(500))
+        }
+    }
 }

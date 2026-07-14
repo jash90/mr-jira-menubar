@@ -52,11 +52,87 @@ final class JiraClientTests: XCTestCase {
         )
     }
 
-    func testTestingRejectedJQLMatchesSpec() {
+    func testEverRejectedJQLMatchesSpec() {
         XCTAssertEqual(
-            JiraClient.testingRejectedJQL,
-            #"(assignee = currentUser() OR status CHANGED TO "Internal testing" BY currentUser()) AND status CHANGED TO "Internal testing" AND status in ("Backlog", "To Do", "New", "In Progress", "Code review")"#
+            JiraClient.everRejectedJQL,
+            #"status CHANGED TO "Internal testing" BY currentUser() AND status CHANGED FROM "Internal testing" TO "In Progress""#
         )
+    }
+
+    func testRejectionCycleDetectsBounceBySomeoneElse() {
+        let bounceDate = Date(timeIntervalSince1970: 100)
+        let transitions = [
+            StatusTransition(author: "me", toStatus: "Internal testing", date: Date(timeIntervalSince1970: 50)),
+            StatusTransition(author: "tester", toStatus: "In Progress", date: bounceDate),
+        ]
+        XCTAssertEqual(JiraClient.rejectionCycle(in: transitions, me: "me"), bounceDate)
+    }
+
+    // Sticky: the cycle counts even when the issue later went to testing again and got accepted.
+    func testRejectionCycleSurvivesLaterAcceptance() {
+        let bounceDate = Date(timeIntervalSince1970: 100)
+        let transitions = [
+            StatusTransition(author: "me", toStatus: "Internal testing", date: Date(timeIntervalSince1970: 50)),
+            StatusTransition(author: "tester", toStatus: "In Progress", date: bounceDate),
+            StatusTransition(author: "me", toStatus: "Internal testing", date: Date(timeIntervalSince1970: 200)),
+            StatusTransition(author: "tester", toStatus: "Acceptance", date: Date(timeIntervalSince1970: 300)),
+        ]
+        XCTAssertEqual(JiraClient.rejectionCycle(in: transitions, me: "me"), bounceDate)
+    }
+
+    func testRejectionCycleIgnoresBounceByMe() {
+        let transitions = [
+            StatusTransition(author: "me", toStatus: "Internal testing"),
+            StatusTransition(author: "me", toStatus: "In Progress"),
+        ]
+        XCTAssertNil(JiraClient.rejectionCycle(in: transitions, me: "me"))
+    }
+
+    func testRejectionCycleIgnoresBounceToOtherStatus() {
+        let transitions = [
+            StatusTransition(author: "me", toStatus: "Internal testing"),
+            StatusTransition(author: "tester", toStatus: "Code review"),
+        ]
+        XCTAssertNil(JiraClient.rejectionCycle(in: transitions, me: "me"))
+    }
+
+    func testRejectionCycleIgnoresOtherDevelopersCycle() {
+        let transitions = [
+            StatusTransition(author: "other.dev", toStatus: "Internal testing"),
+            StatusTransition(author: "tester", toStatus: "In Progress"),
+        ]
+        XCTAssertNil(JiraClient.rejectionCycle(in: transitions, me: "me"))
+    }
+
+    func testRejectionCycleNilWithoutBounce() {
+        let transitions = [
+            StatusTransition(author: "me", toStatus: "Internal testing"),
+        ]
+        XCTAssertNil(JiraClient.rejectionCycle(in: transitions, me: "me"))
+    }
+
+    func testRejectedCountCountsCyclesFromChangelog() async throws {
+        StubURLProtocol.handler = { req in
+            if req.url!.path == "/rest/api/2/myself" {
+                return .init(statusCode: 200, body: Data(#"{"name":"me"}"#.utf8))
+            }
+
+            let rejected = #"""
+                {"key":"SOFKRS-1","changelog":{"histories":[
+                {"author":{"name":"me"},"items":[{"field":"status","toString":"Internal testing"}]},
+                {"author":{"name":"tester"},"items":[{"field":"status","toString":"In Progress"}]}]}}
+                """#
+            let selfBounced = #"""
+                {"key":"SOFKRS-2","changelog":{"histories":[
+                {"author":{"name":"me"},"items":[{"field":"status","toString":"Internal testing"}]},
+                {"author":{"name":"me"},"items":[{"field":"status","toString":"In Progress"}]}]}}
+                """#
+            let body = #"{"total":2,"issues":["# + rejected + "," + selfBounced + "]}"
+            return .init(statusCode: 200, body: Data(body.utf8))
+        }
+        let client = JiraClient(host: "jira.example", token: "tok", session: StubURLProtocol.session())
+        let count = try await client.testingRejectedCount()
+        XCTAssertEqual(count, 1)
     }
 
     // Scenario like SOFKRS-7983: reviewer moves the ticket to testing, but the tested work
@@ -102,32 +178,56 @@ final class JiraClientTests: XCTestCase {
         XCTAssertNil(JiraClient.developerOfLastTestingRound(transitions))
     }
 
-    func testRejectedCountFiltersOutOtherDevelopersRounds() async throws {
+    func testSearchTransitionsPaginatesAndParsesKeysAndDates() async throws {
+        StubURLProtocol.handler = { req in
+            XCTAssertEqual(req.url!.path, "/rest/api/2/search")
+            let query = req.url!.query!
+            XCTAssertTrue(query.contains("expand=changelog"))
+            let pageOne = #"""
+                {"total":2,"issues":[
+                {"key":"SOFKRS-1","changelog":{"histories":[
+                {"author":{"name":"me"},"created":"2026-01-10T10:00:00.000+0100","items":[{"field":"status","toString":"Internal testing"}]}]}}]}
+                """#
+            let pageTwo = #"""
+                {"total":2,"issues":[
+                {"key":"SOFKRS-2","changelog":{"histories":[
+                {"author":{"name":"tester"},"items":[{"field":"status","toString":"In Progress"}]}]}}]}
+                """#
+            let body = query.contains("startAt=0") ? pageOne : pageTwo
+            return .init(statusCode: 200, body: Data(body.utf8))
+        }
+        let client = JiraClient(host: "jira.example", token: "tok", session: StubURLProtocol.session())
+        let issues = try await client.searchTransitions(jql: "anything")
+        XCTAssertEqual(issues.map(\.key), ["SOFKRS-1", "SOFKRS-2"])
+        let expectedDate = JiraClient.changelogDateFormatter.date(from: "2026-01-10T10:00:00.000+0100")!
+        XCTAssertEqual(issues[0].transitions, [StatusTransition(author: "me", toStatus: "Internal testing", date: expectedDate)])
+        XCTAssertEqual(issues[1].transitions[0].date, .distantFuture)
+    }
+
+    func testAcceptedCountFiltersOutOtherDevelopersRounds() async throws {
         StubURLProtocol.handler = { req in
             if req.url!.path == "/rest/api/2/myself" {
                 return .init(statusCode: 200, body: Data(#"{"name":"me"}"#.utf8))
             }
 
             XCTAssertEqual(req.url!.path, "/rest/api/2/search")
-            XCTAssertTrue(req.url!.query!.contains("expand=changelog"))
             let mine = #"""
-                {"changelog":{"histories":[
+                {"key":"SOFKRS-1","changelog":{"histories":[
                 {"author":{"name":"me"},"items":[{"field":"status","toString":"Code review"}]},
                 {"author":{"name":"reviewer"},"items":[{"field":"status","toString":"Internal testing"}]},
-                {"author":{"name":"tester"},"items":[{"field":"status","toString":"In Progress"}]}]}}
+                {"author":{"name":"tester"},"items":[{"field":"status","toString":"Acceptance"}]}]}}
                 """#
             let takenOver = #"""
-                {"changelog":{"histories":[
+                {"key":"SOFKRS-2","changelog":{"histories":[
                 {"author":{"name":"other.dev"},"items":[{"field":"status","toString":"Code review"}]},
                 {"author":{"name":"reviewer"},"items":[{"field":"status","toString":"Internal testing"}]},
-                {"author":{"name":"tester"},"items":[{"field":"status","toString":"In Progress"}]},
-                {"author":{"name":"me"},"items":[{"field":"status","toString":"Code review"}]}]}}
+                {"author":{"name":"tester"},"items":[{"field":"status","toString":"Acceptance"}]}]}}
                 """#
-            let body = #"{"issues":["# + mine + "," + takenOver + "]}"
+            let body = #"{"total":2,"issues":["# + mine + "," + takenOver + "]}"
             return .init(statusCode: 200, body: Data(body.utf8))
         }
         let client = JiraClient(host: "jira.example", token: "tok", session: StubURLProtocol.session())
-        let count = try await client.testingRejectedCount()
+        let count = try await client.testingAcceptedCount()
         XCTAssertEqual(count, 1)
     }
 

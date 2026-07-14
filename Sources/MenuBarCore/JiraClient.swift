@@ -26,10 +26,18 @@ public enum JiraError: Error, Equatable, CustomStringConvertible {
 public struct StatusTransition: Equatable, Sendable {
     public let author: String
     public let toStatus: String
-    public init(author: String, toStatus: String) {
+    public let date: Date
+
+    public init(author: String, toStatus: String, date: Date = .distantPast) {
         self.author = author
         self.toStatus = toStatus
+        self.date = date
     }
+}
+
+struct IssueTransitions: Equatable, Sendable {
+    let key: String
+    let transitions: [StatusTransition]
 }
 
 public struct JiraClient: JiraFetching, Sendable {
@@ -51,8 +59,9 @@ public struct JiraClient: JiraFetching, Sendable {
         myTestedIssues + #" AND status = "Internal testing""#
     public static let testingAcceptedJQL =
         myTestedIssues + #" AND status not in ("Internal testing", "# + preTestingStatuses + ")"
-    public static let testingRejectedJQL =
-        myTestedIssues + " AND status in (" + preTestingStatuses + ")"
+    public static let inProgressStatus = "In Progress"
+    public static let everRejectedJQL =
+        #"status CHANGED TO "Internal testing" BY currentUser() AND status CHANGED FROM "Internal testing" TO "In Progress""#
 
     public let host: String
     let token: String
@@ -69,11 +78,12 @@ public struct JiraClient: JiraFetching, Sendable {
     struct MyselfResult: Decodable { let name: String }
 
     struct ChangelogSearchResult: Decodable {
+        let total: Int
         let issues: [Issue]
 
-        struct Issue: Decodable { let changelog: Changelog }
+        struct Issue: Decodable { let key: String; let changelog: Changelog }
         struct Changelog: Decodable { let histories: [History] }
-        struct History: Decodable { let author: Author; let items: [Item] }
+        struct History: Decodable { let author: Author; let created: String?; let items: [Item] }
         struct Author: Decodable { let name: String }
         struct Item: Decodable {
             let field: String
@@ -84,6 +94,13 @@ public struct JiraClient: JiraFetching, Sendable {
             }
         }
     }
+
+    static let changelogDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        return formatter
+    }()
 
     func get(path: String, queryItems: [URLQueryItem]) async throws -> Data {
         var comps = URLComponents()
@@ -112,23 +129,36 @@ public struct JiraClient: JiraFetching, Sendable {
         return try JSONDecoder().decode(MyselfResult.self, from: data).name
     }
 
-    func searchTransitions(jql: String) async throws -> [[StatusTransition]] {
-        let data = try await get(path: "/rest/api/2/search", queryItems: [
-            .init(name: "jql", value: jql),
-            .init(name: "expand", value: "changelog"),
-            .init(name: "fields", value: "status"),
-            .init(name: "maxResults", value: "100"),
-        ])
-        let result = try JSONDecoder().decode(ChangelogSearchResult.self, from: data)
-        return result.issues.map { issue in
-            issue.changelog.histories.flatMap { history in
-                history.items.compactMap { item -> StatusTransition? in
-                    guard item.field == "status", let to = item.to else { return nil }
+    func searchTransitions(jql: String) async throws -> [IssueTransitions] {
+        var startAt = 0
+        var result: [IssueTransitions] = []
+        while true {
+            let data = try await get(path: "/rest/api/2/search", queryItems: [
+                .init(name: "jql", value: jql),
+                .init(name: "expand", value: "changelog"),
+                .init(name: "fields", value: "status"),
+                .init(name: "maxResults", value: "100"),
+                .init(name: "startAt", value: String(startAt)),
+            ])
+            let page = try JSONDecoder().decode(ChangelogSearchResult.self, from: data)
+            result.append(contentsOf: page.issues.map(Self.issueTransitions(from:)))
+            startAt += page.issues.count
 
-                    return StatusTransition(author: history.author.name, toStatus: to)
-                }
+            if page.issues.isEmpty || startAt >= page.total { break }
+        }
+        return result
+    }
+
+    static func issueTransitions(from issue: ChangelogSearchResult.Issue) -> IssueTransitions {
+        let transitions = issue.changelog.histories.flatMap { history -> [StatusTransition] in
+            let date = history.created.flatMap(changelogDateFormatter.date(from:)) ?? .distantFuture
+            return history.items.compactMap { item -> StatusTransition? in
+                guard item.field == "status", let to = item.to else { return nil }
+
+                return StatusTransition(author: history.author.name, toStatus: to, date: date)
             }
         }
+        return IssueTransitions(key: issue.key, transitions: transitions)
     }
 
     // JQL cannot see who developed the tested round (a takeover after rejection would count
@@ -145,12 +175,32 @@ public struct JiraClient: JiraFetching, Sendable {
         return transitions[lastTestingIndex].author
     }
 
+    // A rejection: I sent the issue to testing and the very next status change is
+    // someone else bouncing it back to In Progress. Returns the bounce date.
+    public static func rejectionCycle(in transitions: [StatusTransition], me: String) -> Date? {
+        for (index, transition) in transitions.enumerated() {
+            guard transition.toStatus == testingStatus, transition.author == me else { continue }
+
+            let next = transitions[(index + 1)...].first
+
+            if let next, next.toStatus == inProgressStatus, next.author != me {
+                return next.date
+            }
+        }
+
+        return nil
+    }
+
+    func rejectionCandidates() async throws -> [IssueTransitions] {
+        try await searchTransitions(jql: Self.everRejectedJQL)
+    }
+
     func myDevelopedCount(jql: String) async throws -> Int {
         async let me = myself()
         async let transitionsPerIssue = searchTransitions(jql: jql)
         let developer = try await me
         return try await transitionsPerIssue
-            .filter { Self.developerOfLastTestingRound($0) == developer }
+            .filter { Self.developerOfLastTestingRound($0.transitions) == developer }
             .count
     }
 
@@ -158,5 +208,12 @@ public struct JiraClient: JiraFetching, Sendable {
     public func inProgressCount() async throws -> Int { try await count(jql: Self.inProgressJQL) }
     public func testingAwaitingCount() async throws -> Int { try await count(jql: Self.testingAwaitingJQL) }
     public func testingAcceptedCount() async throws -> Int { try await myDevelopedCount(jql: Self.testingAcceptedJQL) }
-    public func testingRejectedCount() async throws -> Int { try await myDevelopedCount(jql: Self.testingRejectedJQL) }
+    public func testingRejectedCount() async throws -> Int {
+        async let me = myself()
+        async let candidates = rejectionCandidates()
+        let developer = try await me
+        return try await candidates
+            .filter { Self.rejectionCycle(in: $0.transitions, me: developer) != nil }
+            .count
+    }
 }
