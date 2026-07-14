@@ -163,7 +163,7 @@ final class StatusItemController: NSObject {
             menu.addItem(link("  W toku: \(progText)", url: jiraURL(JiraClient.inProgressJQL)))
             menu.addItem(link("  W testach — czeka: \(awaitingText)", url: jiraURL(JiraClient.testingAwaitingJQL)))
             menu.addItem(link("  Zaakceptowane: \(acceptedText)", url: jiraURL(JiraClient.testingAcceptedJQL)))
-            menu.addItem(link("  Odrzucone: \(rejectedText)", url: jiraURL(JiraClient.testingRejectedJQL)))
+            menu.addItem(link("  Odrzucone: \(rejectedText)", url: jiraURL(JiraClient.everRejectedJQL)))
             if let e = jira.error { menu.addItem(NSMenuItem(title: "  Błąd: \(e)", action: nil, keyEquivalent: "")) }
 
             menu.addItem(.separator())

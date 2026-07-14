@@ -59,8 +59,9 @@ public struct JiraClient: JiraFetching, Sendable {
         myTestedIssues + #" AND status = "Internal testing""#
     public static let testingAcceptedJQL =
         myTestedIssues + #" AND status not in ("Internal testing", "# + preTestingStatuses + ")"
-    public static let testingRejectedJQL =
-        myTestedIssues + " AND status in (" + preTestingStatuses + ")"
+    public static let inProgressStatus = "In Progress"
+    public static let everRejectedJQL =
+        #"status CHANGED TO "Internal testing" BY currentUser() AND status CHANGED FROM "Internal testing" TO "In Progress""#
 
     public let host: String
     let token: String
@@ -174,6 +175,26 @@ public struct JiraClient: JiraFetching, Sendable {
         return transitions[lastTestingIndex].author
     }
 
+    // A rejection: I sent the issue to testing and the very next status change is
+    // someone else bouncing it back to In Progress. Returns the bounce date.
+    public static func rejectionCycle(in transitions: [StatusTransition], me: String) -> Date? {
+        for (index, transition) in transitions.enumerated() {
+            guard transition.toStatus == testingStatus, transition.author == me else { continue }
+
+            let next = transitions[(index + 1)...].first
+
+            if let next, next.toStatus == inProgressStatus, next.author != me {
+                return next.date
+            }
+        }
+
+        return nil
+    }
+
+    func rejectionCandidates() async throws -> [IssueTransitions] {
+        try await searchTransitions(jql: Self.everRejectedJQL)
+    }
+
     func myDevelopedCount(jql: String) async throws -> Int {
         async let me = myself()
         async let transitionsPerIssue = searchTransitions(jql: jql)
@@ -187,5 +208,12 @@ public struct JiraClient: JiraFetching, Sendable {
     public func inProgressCount() async throws -> Int { try await count(jql: Self.inProgressJQL) }
     public func testingAwaitingCount() async throws -> Int { try await count(jql: Self.testingAwaitingJQL) }
     public func testingAcceptedCount() async throws -> Int { try await myDevelopedCount(jql: Self.testingAcceptedJQL) }
-    public func testingRejectedCount() async throws -> Int { try await myDevelopedCount(jql: Self.testingRejectedJQL) }
+    public func testingRejectedCount() async throws -> Int {
+        async let me = myself()
+        async let candidates = rejectionCandidates()
+        let developer = try await me
+        return try await candidates
+            .filter { Self.rejectionCycle(in: $0.transitions, me: developer) != nil }
+            .count
+    }
 }
