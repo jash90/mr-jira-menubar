@@ -17,7 +17,12 @@ public enum ClientFactory {
     public static func makeJira(_ config: AppConfig) -> (any JiraFetching)? {
         guard config.jiraActive else { return nil }
 
-        return JiraClient(host: config.jiraHost, token: config.jiraToken)
+        let jira = JiraClient(host: config.jiraHost, token: config.jiraToken)
+
+        guard config.gitlabActive else { return jira }
+
+        let gitlab = GitLabClient(host: config.gitlabHost, token: config.gitlabToken)
+        return JiraWithRejectionService(base: jira, service: RejectedIssuesService(jira: jira, gitlab: gitlab))
     }
 
     public static func makeGitHub(_ config: AppConfig) -> (any GitHubFetching)? {

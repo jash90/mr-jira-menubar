@@ -31,4 +31,17 @@ final class ClientFactoryTests: XCTestCase {
         let active = AppConfig(jiraHost: "jira.example", jiraToken: "t")
         XCTAssertEqual((ClientFactory.makeJira(active) as? JiraClient)?.host, "jira.example")
     }
+
+    func testMakeJiraWrapsWithRejectionServiceWhenGitLabActive() {
+        let both = AppConfig(
+            gitlabHost: "gl.example",
+            gitlabToken: "gt",
+            jiraHost: "jira.example",
+            jiraToken: "jt"
+        )
+        XCTAssertTrue(ClientFactory.makeJira(both) is JiraWithRejectionService)
+
+        let jiraOnly = AppConfig(jiraHost: "jira.example", jiraToken: "jt")
+        XCTAssertTrue(ClientFactory.makeJira(jiraOnly) is JiraClient)
+    }
 }
