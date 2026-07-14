@@ -102,32 +102,56 @@ final class JiraClientTests: XCTestCase {
         XCTAssertNil(JiraClient.developerOfLastTestingRound(transitions))
     }
 
-    func testRejectedCountFiltersOutOtherDevelopersRounds() async throws {
+    func testSearchTransitionsPaginatesAndParsesKeysAndDates() async throws {
+        StubURLProtocol.handler = { req in
+            XCTAssertEqual(req.url!.path, "/rest/api/2/search")
+            let query = req.url!.query!
+            XCTAssertTrue(query.contains("expand=changelog"))
+            let pageOne = #"""
+                {"total":2,"issues":[
+                {"key":"SOFKRS-1","changelog":{"histories":[
+                {"author":{"name":"me"},"created":"2026-01-10T10:00:00.000+0100","items":[{"field":"status","toString":"Internal testing"}]}]}}]}
+                """#
+            let pageTwo = #"""
+                {"total":2,"issues":[
+                {"key":"SOFKRS-2","changelog":{"histories":[
+                {"author":{"name":"tester"},"items":[{"field":"status","toString":"In Progress"}]}]}}]}
+                """#
+            let body = query.contains("startAt=0") ? pageOne : pageTwo
+            return .init(statusCode: 200, body: Data(body.utf8))
+        }
+        let client = JiraClient(host: "jira.example", token: "tok", session: StubURLProtocol.session())
+        let issues = try await client.searchTransitions(jql: "anything")
+        XCTAssertEqual(issues.map(\.key), ["SOFKRS-1", "SOFKRS-2"])
+        let expectedDate = JiraClient.changelogDateFormatter.date(from: "2026-01-10T10:00:00.000+0100")!
+        XCTAssertEqual(issues[0].transitions, [StatusTransition(author: "me", toStatus: "Internal testing", date: expectedDate)])
+        XCTAssertEqual(issues[1].transitions[0].date, .distantFuture)
+    }
+
+    func testAcceptedCountFiltersOutOtherDevelopersRounds() async throws {
         StubURLProtocol.handler = { req in
             if req.url!.path == "/rest/api/2/myself" {
                 return .init(statusCode: 200, body: Data(#"{"name":"me"}"#.utf8))
             }
 
             XCTAssertEqual(req.url!.path, "/rest/api/2/search")
-            XCTAssertTrue(req.url!.query!.contains("expand=changelog"))
             let mine = #"""
-                {"changelog":{"histories":[
+                {"key":"SOFKRS-1","changelog":{"histories":[
                 {"author":{"name":"me"},"items":[{"field":"status","toString":"Code review"}]},
                 {"author":{"name":"reviewer"},"items":[{"field":"status","toString":"Internal testing"}]},
-                {"author":{"name":"tester"},"items":[{"field":"status","toString":"In Progress"}]}]}}
+                {"author":{"name":"tester"},"items":[{"field":"status","toString":"Acceptance"}]}]}}
                 """#
             let takenOver = #"""
-                {"changelog":{"histories":[
+                {"key":"SOFKRS-2","changelog":{"histories":[
                 {"author":{"name":"other.dev"},"items":[{"field":"status","toString":"Code review"}]},
                 {"author":{"name":"reviewer"},"items":[{"field":"status","toString":"Internal testing"}]},
-                {"author":{"name":"tester"},"items":[{"field":"status","toString":"In Progress"}]},
-                {"author":{"name":"me"},"items":[{"field":"status","toString":"Code review"}]}]}}
+                {"author":{"name":"tester"},"items":[{"field":"status","toString":"Acceptance"}]}]}}
                 """#
-            let body = #"{"issues":["# + mine + "," + takenOver + "]}"
+            let body = #"{"total":2,"issues":["# + mine + "," + takenOver + "]}"
             return .init(statusCode: 200, body: Data(body.utf8))
         }
         let client = JiraClient(host: "jira.example", token: "tok", session: StubURLProtocol.session())
-        let count = try await client.testingRejectedCount()
+        let count = try await client.testingAcceptedCount()
         XCTAssertEqual(count, 1)
     }
 
