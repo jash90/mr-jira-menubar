@@ -22,7 +22,11 @@ public enum GitLabError: Error, Equatable, CustomStringConvertible {
     }
 }
 
-public struct GitLabClient: GitLabFetching, Sendable {
+public protocol MergeRequestLookup: Sendable {
+    func hasMyMergeRequest(referencing key: String, createdBefore: Date) async throws -> Bool
+}
+
+public struct GitLabClient: GitLabFetching, MergeRequestLookup, Sendable {
     public let host: String
     let token: String
     let session: URLSession
@@ -59,6 +63,25 @@ public struct GitLabClient: GitLabFetching, Sendable {
             throw GitLabError.missingTotal
         }
         return n
+    }
+
+    static let createdBeforeFormatter = ISO8601DateFormatter()
+
+    public func hasMyMergeRequest(referencing key: String, createdBefore: Date) async throws -> Bool {
+        let req = request("/merge_requests", query: [
+            .init(name: "scope", value: "created_by_me"),
+            .init(name: "state", value: "all"),
+            .init(name: "search", value: key),
+            .init(name: "created_before", value: Self.createdBeforeFormatter.string(from: createdBefore)),
+            .init(name: "per_page", value: "1"),
+        ])
+        let (_, response) = try await session.data(for: req)
+        guard let http = response as? HTTPURLResponse else { throw GitLabError.badResponse }
+        guard http.statusCode == 200 else { throw GitLabError.status(http.statusCode) }
+        guard let total = http.value(forHTTPHeaderField: "X-Total"), let n = Int(total) else {
+            throw GitLabError.missingTotal
+        }
+        return n > 0
     }
 
     struct MRRef: Decodable { let project_id: Int; let iid: Int }
