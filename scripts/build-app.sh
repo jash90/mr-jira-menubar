@@ -6,8 +6,9 @@ set -euo pipefail
 APP_NAME="MR Jira Menu Bar"
 EXECUTABLE="MRJiraMenuBar"
 BUNDLE_ID="com.raccoonsoftware.mrjiramenubar"
-VERSION="1.4.0"
-SHORT_VERSION="1.4.0"
+# Overridable so the release workflow can pass the tag (VERSION=1.4.0 scripts/build-app.sh).
+VERSION="${VERSION:-1.4.0}"
+SHORT_VERSION="$VERSION"
 MIN_MACOS="13.0"
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
