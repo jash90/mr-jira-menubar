@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MR Jira Menu Bar — merge requests, pull requests and Jira in your macOS menu bar</title>
+  <meta name="description" content="A free macOS menu bar app that shows your open GitLab merge requests, GitHub pull requests and Jira issues at a glance — no browser tabs required.">
+  <link rel="canonical" href="https://jash90.github.io/mr-jira-menubar/en/">
+  <link rel="alternate" hreflang="pl" href="https://jash90.github.io/mr-jira-menubar/">
+  <link rel="alternate" hreflang="en" href="https://jash90.github.io/mr-jira-menubar/en/">
+  <link rel="alternate" hreflang="x-default" href="https://jash90.github.io/mr-jira-menubar/">
+  <meta name="theme-color" content="#4a3df0">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MR Jira Menu Bar">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="pl_PL">
+  <meta property="og:title" content="MR Jira Menu Bar — your work, right in the macOS menu bar">
+  <meta property="og:description" content="Live counters for your GitLab merge requests, GitHub pull requests and Jira issues, refreshed every 5 minutes.">
+  <meta property="og:url" content="https://jash90.github.io/mr-jira-menubar/en/">
+  <meta property="og:image" content="https://jash90.github.io/mr-jira-menubar/assets/og-en.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="The MR Jira Menu Bar icon next to an open menu with GitLab, GitHub and Jira counters">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+  <link rel="stylesheet" href="../assets/style.css">
+  <script src="../assets/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <nav class="container nav" aria-label="Main navigation">
+      <a class="brand" href="./">
+        <img src="../assets/favicon.png" alt="" width="32" height="32">
+        <span>MR Jira Menu Bar</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How it works</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#developers">For developers</a></li>
+      </ul>
+      <a class="lang-switch" href="../" hreflang="pl" lang="pl">
+        <span aria-hidden="true">PL</span><span class="visually-hidden">Przeczytaj tę stronę po polsku</span>
+      </a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">A macOS menu bar app</span>
+          <h1 id="hero-title">Your MRs, PRs and Jira issues. <span class="grad">Always in view.</span></h1>
+          <p class="lead">MR Jira Menu Bar keeps a live count in your menu bar: how many merge requests you have open, how many are ready to merge, and where your Jira issues stand — without switching to the browser.</p>
+          <div class="cta">
+            <a class="btn btn-primary" href="https://github.com/jash90/mr-jira-menubar/releases/latest">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m0 0 5-5m-5 5-5-5M4 19h16"/></svg>
+              Download for macOS
+            </a>
+            <a class="btn btn-ghost" href="https://github.com/jash90/mr-jira-menubar">Source code on GitHub</a>
+          </div>
+          <p class="meta">Free · source on GitHub · macOS 13 Ventura or later · DMG installer · Polish-language interface</p>
+        </div>
+        <div class="hero-shot">
+          <img src="../assets/screenshots/hero.webp" width="665" height="530"
+               alt="The macOS menu bar showing the app's counters with its menu open: GitLab — 4 open MRs, 2 ready to merge; GitHub — 3 open PRs, 1 approved; Jira — backlog 7, in progress 2, in testing 3, accepted 12, rejected 1. Menu labels are in Polish.">
+        </div>
+      </div>
+    </section>
+
+    <section class="section-soft" aria-labelledby="problem-title">
+      <div class="container">
+        <div class="section-intro">
+          <h2 id="problem-title">Your work status, scattered across three browser tabs</h2>
+          <p>Code lives in GitLab or on GitHub, tasks live in Jira. Finding out whether something can be merged, or whether QA sent an issue back, means opening several tabs and clicking through filters.</p>
+        </div>
+        <div class="problem-grid">
+          <div class="card">
+            <h3>Reviews that sit idle</h3>
+            <p>Your merge request already has two approvals, but you won't know until you go and check GitLab yourself.</p>
+          </div>
+          <div class="card">
+            <h3>Issues that bounce back</h3>
+            <p>A tester moved an issue back to “In Progress”. It's easy to miss — and even harder to keep track of how often it happens.</p>
+          </div>
+          <div class="card">
+            <h3>Constant context switching</h3>
+            <p>Every “let me just check” pulls you out of your editor. A number in the menu bar answers the question at a glance.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" aria-labelledby="features-title">
+      <div class="container">
+        <div class="section-intro">
+          <h2 id="features-title">What it does</h2>
+          <p>The app runs in the background with no Dock icon. Every 5 minutes it fetches counts from the sources you've enabled and shows them in the menu bar.</p>
+        </div>
+
+        <article class="feature">
+          <div>
+            <h3>Counters right in the menu bar</h3>
+            <p>Each counter has its own icon, and hovering shows a one-line summary. Available counters:</p>
+            <ul>
+              <li><strong>GitLab</strong> — your open merge requests, and those ready to merge (at least 2 approvals).</li>
+              <li><strong>GitHub</strong> — your open pull requests, and those that are approved.</li>
+              <li><strong>Jira</strong> — backlog (“To Do” / “Backlog”), in progress, waiting in testing, accepted and rejected.</li>
+            </ul>
+          </div>
+          <div class="feature-media">
+            <div class="frame">
+              <img class="bar-shot" src="../assets/screenshots/menubar.webp" width="325" height="30" loading="lazy"
+                   alt="Menu bar counters: 4 open MRs, 2 ready to merge, 3 open PRs, 1 approved, backlog 7, in progress 2, in testing 3, accepted 12, rejected 1.">
+            </div>
+          </div>
+        </article>
+
+        <article class="feature">
+          <div>
+            <h3>One click to the right list</h3>
+            <p>Clicking the icon opens a menu broken down by source. Every entry opens the matching view in your browser: your merge request dashboard in GitLab, a pull request search on GitHub, or a ready-made JQL filter in Jira.</p>
+            <p>The menu also shows when data was last refreshed. Press <kbd>⌘</kbd> <kbd>R</kbd> to refresh immediately.</p>
+          </div>
+          <div class="feature-media">
+            <div class="frame">
+              <img src="../assets/screenshots/menu.webp" width="351" height="473" loading="lazy"
+                   alt="The app's open menu with GitLab, GitHub and Jira sections, the last refresh time, and Refresh now, Settings and Quit items (labels in Polish).">
+            </div>
+          </div>
+        </article>
+
+        <article class="feature">
+          <div>
+            <h3>A rejection counter that sticks</h3>
+            <p>“Rejected” counts every issue that has ever been sent back from testing — even if it was accepted later. An issue counts when:</p>
+            <ul>
+              <li>you moved it to the “Internal testing” status,</li>
+              <li>the very next status change was back to “In Progress”, made by someone else,</li>
+              <li>with GitLab enabled: a merge request of yours that mentions the issue key was created before that bounce-back.</li>
+            </ul>
+            <p class="note">Status names (“To Do”, “Backlog”, “In Progress”, “Code review”, “Internal testing”) are hard-coded, so the app assumes this Jira workflow.</p>
+          </div>
+          <div class="feature-media">
+            <div class="frame">
+              <img class="bar-shot" src="../assets/screenshots/menubar-compact.webp" width="161" height="30" loading="lazy"
+                   alt="A trimmed-down menu bar with four counters: 4 open MRs, 2 ready to merge, 2 in progress, 1 rejected.">
+            </div>
+          </div>
+        </article>
+
+        <article class="feature">
+          <div>
+            <h3>Show only what you need</h3>
+            <p>In Settings you enter a host and a token for each source. GitLab and GitHub can each be switched off with a single toggle, and any of the nine counters can be hidden from the menu bar — it still appears in the menu.</p>
+            <ul>
+              <li>Works with self-hosted GitLab, GitHub.com, GitHub Enterprise, and Jira Server / Data Center (personal access token).</li>
+              <li>Tokens are stored in the macOS Keychain as a single encrypted item.</li>
+              <li>Optional “launch at login”.</li>
+            </ul>
+          </div>
+          <div class="feature-media">
+            <div class="frame">
+              <picture>
+                <source srcset="../assets/screenshots/settings-dark.webp" media="(prefers-color-scheme: dark)">
+                <img src="../assets/screenshots/settings-light.webp" width="552" height="1027" loading="lazy" style="max-height: 560px; width: auto;"
+                     alt="The Settings window with General, GitLab, Jira, GitHub and menu bar counter sections. Hosts gitlab.example.com and jira.example.com, tokens masked. Labels in Polish.">
+              </picture>
+            </div>
+          </div>
+        </article>
+
+        <article class="feature">
+          <div>
+            <h3>Know right away when something breaks</h3>
+            <p>If a source is configured but can't be reached, its menu bar counters turn into a red warning symbol and a banner appears at the top of the menu. An expired token shows up as a clear 401 message.</p>
+            <p>The other sources keep working — one failing doesn't block the rest.</p>
+          </div>
+          <div class="feature-media">
+            <div class="frame">
+              <img class="bar-shot" src="../assets/screenshots/menubar-error.webp" width="334" height="30" loading="lazy"
+                   alt="The menu bar with the GitLab counters replaced by red warning symbols and a dash.">
+              <img src="../assets/screenshots/menu-error.webp" width="479" height="546" loading="lazy"
+                   alt="The menu with a red banner saying the connection failed despite valid configuration, and the error “GitLab 401 — token expired or changed” (in Polish).">
+            </div>
+          </div>
+        </article>
+
+        <article class="feature">
+          <div>
+            <h3>Updates without the hunt</h3>
+            <p>Every 6 hours the app checks the latest GitHub release. When a newer version is out, a “new version — download” item appears in the menu; it saves the DMG to your Downloads folder and opens it.</p>
+          </div>
+          <div class="feature-media">
+            <div class="frame">
+              <img src="../assets/screenshots/menu-update.webp" width="351" height="508" loading="lazy"
+                   alt="The menu with an extra item at the top announcing version 1.5.0 for download, with a down-arrow icon.">
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="section-soft" aria-labelledby="how-title">
+      <div class="container">
+        <div class="section-intro">
+          <h2 id="how-title">How it works</h2>
+          <p>Three steps from download to your first counters.</p>
+        </div>
+        <ol class="steps">
+          <li class="card">
+            <span class="num" aria-hidden="true">1</span>
+            <h3>Install</h3>
+            <p>Download the DMG from the <a href="https://github.com/jash90/mr-jira-menubar/releases/latest">latest release</a> and drag the app into Applications.</p>
+          </li>
+          <li class="card">
+            <span class="num" aria-hidden="true">2</span>
+            <h3>Add hosts and tokens</h3>
+            <p>On first launch a gear icon appears in the menu bar and Settings opens. Fill in at least one source and click “Zapisz” (Save).</p>
+          </li>
+          <li class="card">
+            <span class="num" aria-hidden="true">3</span>
+            <h3>Glance at the menu bar</h3>
+            <p>Counters refresh every 5 minutes. Click the icon for details, or jump straight to the list in GitLab, GitHub or Jira.</p>
+          </li>
+        </ol>
+        <p class="note" style="margin-top:1.5rem">The current release (v1.4.0) is not signed with a Developer ID certificate or notarized, so macOS will block the first launch. When that happens, open System Settings → Privacy &amp; Security and click “Open Anyway” (on older macOS versions: right-click the app and choose “Open”).</p>
+      </div>
+    </section>
+
+    <section id="gallery" aria-labelledby="gallery-title">
+      <div class="container">
+        <div class="section-intro">
+          <h2 id="gallery-title">Gallery</h2>
+          <p>Screenshots of the running app, filled with sample data. The interface is in Polish. Click any image to enlarge it.</p>
+        </div>
+        <ul class="gallery">
+          <li><a href="../assets/screenshots/hero.webp" data-lightbox>
+            <span class="thumb"><img src="../assets/screenshots/hero.webp" width="665" height="530" loading="lazy" alt="Menu bar counters with the app menu open."></span>
+            <span class="cap">Counters and the open menu</span></a></li>
+          <li><a href="../assets/screenshots/menu.webp" data-lightbox>
+            <span class="thumb"><img src="../assets/screenshots/menu.webp" width="351" height="473" loading="lazy" alt="The menu broken down into GitLab, GitHub and Jira."></span>
+            <span class="cap">Menu broken down by source</span></a></li>
+          <li><a href="../assets/screenshots/settings-light.webp" data-lightbox>
+            <span class="thumb"><img src="../assets/screenshots/settings-light.webp" width="552" height="1027" loading="lazy" alt="The Settings window in light mode."></span>
+            <span class="cap">Settings (light mode)</span></a></li>
+          <li><a href="../assets/screenshots/settings-dark.webp" data-lightbox>
+            <span class="thumb"><img src="../assets/screenshots/settings-dark.webp" width="552" height="1027" loading="lazy" alt="The Settings window in dark mode."></span>
+            <span class="cap">Settings (dark mode)</span></a></li>
+          <li><a href="../assets/screenshots/menu-error.webp" data-lightbox>
+            <span class="thumb"><img src="../assets/screenshots/menu-error.webp" width="479" height="546" loading="lazy" alt="The menu reporting a failed connection to GitLab."></span>
+            <span class="cap">GitLab connection error</span></a></li>
+          <li><a href="../assets/screenshots/menu-update.webp" data-lightbox>
+            <span class="thumb"><img src="../assets/screenshots/menu-update.webp" width="351" height="508" loading="lazy" alt="The menu announcing a new version to download."></span>
+            <span class="cap">New version available</span></a></li>
+          <li><a href="../assets/screenshots/needs-config.webp" data-lightbox>
+            <span class="thumb"><img src="../assets/screenshots/needs-config.webp" width="364" height="139" loading="lazy" alt="The menu before setup, asking you to add tokens."></span>
+            <span class="cap">First launch, before setup</span></a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="developers" class="section-soft" aria-labelledby="dev-title">
+      <div class="container">
+        <div class="section-intro">
+          <h2 id="dev-title">For developers</h2>
+          <p>A native Swift app with zero third-party dependencies. The logic is kept separate from the UI and covered by unit tests.</p>
+        </div>
+        <ul class="pill-list" aria-label="Technologies">
+          <li>Swift 5.9</li><li>AppKit (NSStatusItem)</li><li>SwiftUI</li><li>Swift Package Manager</li>
+          <li>CryptoKit</li><li>ServiceManagement</li><li>XCTest</li><li>GitHub Actions</li>
+        </ul>
+        <div class="tech-grid">
+          <div class="card">
+            <h3>Run it locally</h3>
+            <p>Requires macOS 13+ and Xcode (Swift 5.9+).</p>
+<pre><code>git clone https://github.com/jash90/mr-jira-menubar.git
+cd mr-jira-menubar
+swift run MRJiraMenuBar      # development mode
+swift test                   # MenuBarCore tests
+scripts/build-app.sh         # .app + DMG in dist/</code></pre>
+            <p class="note">There are no environment variables — hosts and tokens are entered in the Settings window. Quit from the menu (<kbd>⌘</kbd> <kbd>Q</kbd>).</p>
+          </div>
+          <div class="card">
+            <h3>Layout and APIs</h3>
+            <p><code>Sources/MenuBarCore</code> — Foundation-only logic (API clients, <code>StatusStore</code>, <code>StatusFormatter</code>, settings, updates). <code>Sources/MRJiraMenuBar</code> — the AppKit/SwiftUI interface.</p>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th scope="col">Source</th><th scope="col">API and auth</th></tr></thead>
+                <tbody>
+                  <tr><td>GitLab</td><td>REST API v4, <code>PRIVATE-TOKEN</code> header</td></tr>
+                  <tr><td>GitHub</td><td>Search API, Bearer token; <code>/api/v3</code> path for GitHub Enterprise</td></tr>
+                  <tr><td>Jira</td><td>REST API v2 (JQL search and changelog), PAT sent as Bearer</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="note">Releases are built by the <code>release.yml</code> workflow, which attaches the DMG to the GitHub release. Developer ID signing and notarization kick in when a certificate is present in the repository secrets — without one, the build is ad-hoc signed.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <p>MR Jira Menu Bar · the repository has no license file (LICENSE).</p>
+      <ul class="footer-links">
+        <li><a href="https://github.com/jash90/mr-jira-menubar">Repository</a></li>
+        <li><a href="https://github.com/jash90/mr-jira-menubar/releases">Releases</a></li>
+        <li><a href="https://github.com/jash90/mr-jira-menubar/issues">Report an issue</a></li>
+        <li><a href="../" hreflang="pl" lang="pl">Polski</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <dialog class="lightbox" aria-label="Enlarged screenshot">
+    <button class="close" type="button" aria-label="Close">×</button>
+    <figure><img alt=""><figcaption></figcaption></figure>
+  </dialog>
+</body>
+</html>
