@@ -227,7 +227,7 @@
             <p>Liczniki odświeżają się co 5 minut. Kliknij ikonę, żeby zobaczyć szczegóły albo przejść do listy w GitLabie, na GitHubie lub w Jirze.</p>
           </li>
         </ol>
-        <p class="note" style="margin-top:1.5rem">Wydania są podpisane certyfikatem Developer ID. Jeśli dany build nie przeszedł notaryzacji, przy pierwszym uruchomieniu kliknij aplikację prawym przyciskiem i wybierz „Otwórz”.</p>
+        <p class="note" style="margin-top:1.5rem">Obecne wydanie (v1.4.0) nie jest podpisane certyfikatem Developer ID ani notaryzowane, więc macOS zablokuje pierwsze uruchomienie. Otwórz wtedy Ustawienia systemowe → Prywatność i ochrona i kliknij „Otwórz mimo to” (na starszych wersjach macOS: prawy przycisk na aplikacji → „Otwórz”).</p>
       </div>
     </section>
 
@@ -297,7 +297,7 @@ scripts/build-app.sh         # .app + DMG w dist/</code></pre>
                 </tbody>
               </table>
             </div>
-            <p class="note">Wydania buduje workflow <code>release.yml</code>: podpis Developer ID, opcjonalna notaryzacja i DMG dołączany do release na GitHubie.</p>
+            <p class="note">Wydania buduje workflow <code>release.yml</code> i dołącza DMG do release na GitHubie. Podpis Developer ID i notaryzacja włączają się, gdy w sekretach repozytorium jest certyfikat — bez niego build jest podpisany ad hoc.</p>
           </div>
         </div>
       </div>

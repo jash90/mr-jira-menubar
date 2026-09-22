@@ -227,7 +227,7 @@
             <p>Counters refresh every 5 minutes. Click the icon for details, or jump straight to the list in GitLab, GitHub or Jira.</p>
           </li>
         </ol>
-        <p class="note" style="margin-top:1.5rem">Releases are signed with a Developer ID certificate. If a build wasn't notarized, right-click the app and choose “Open” the first time you launch it.</p>
+        <p class="note" style="margin-top:1.5rem">The current release (v1.4.0) is not signed with a Developer ID certificate or notarized, so macOS will block the first launch. When that happens, open System Settings → Privacy &amp; Security and click “Open Anyway” (on older macOS versions: right-click the app and choose “Open”).</p>
       </div>
     </section>
 
@@ -297,7 +297,7 @@ scripts/build-app.sh         # .app + DMG in dist/</code></pre>
                 </tbody>
               </table>
             </div>
-            <p class="note">Releases are built by the <code>release.yml</code> workflow: Developer ID signing, optional notarization, and a DMG attached to the GitHub release.</p>
+            <p class="note">Releases are built by the <code>release.yml</code> workflow, which attaches the DMG to the GitHub release. Developer ID signing and notarization kick in when a certificate is present in the repository secrets — without one, the build is ad-hoc signed.</p>
           </div>
         </div>
       </div>

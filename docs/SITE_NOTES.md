@@ -45,6 +45,8 @@ zewnętrzne w runtime: API GitLaba, GitHuba, Jiry i GitHub Releases (aktualizacj
 ## CTA, repo, identyfikacja
 
 - Brak adresu produkcyjnego (to aplikacja desktopowa) → CTA: `releases/latest` (DMG v1.4.0).
+- DMG v1.4.0 jest podpisany ad hoc (`codesign -dv`: `Signature=adhoc`, `spctl`: rejected) —
+  strona uczciwie opisuje obejście Gatekeepera zamiast twierdzić, że build ma Developer ID.
 - Repo: `jash90/mr-jira-menubar`, strona: `https://jash90.github.io/mr-jira-menubar/`, brak CNAME.
 - Brak pliku LICENSE, brak danych kontaktowych w repo → w stopce link do Issues.
 - Logo: `assets/AppIcon.png` (gradient niebieski `#3351FC` → fiolet `#7945FF` → magenta `#AD27F3`,
