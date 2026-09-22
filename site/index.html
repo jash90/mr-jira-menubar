@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MR Jira Menu Bar — merge requesty, pull requesty i Jira na pasku menu macOS</title>
+  <meta name="description" content="Darmowa aplikacja na pasek menu macOS. Pokazuje Twoje otwarte merge requesty z GitLaba, pull requesty z GitHuba i zadania z Jiry — bez otwierania przeglądarki.">
+  <link rel="canonical" href="https://jash90.github.io/mr-jira-menubar/">
+  <link rel="alternate" hreflang="pl" href="https://jash90.github.io/mr-jira-menubar/">
+  <link rel="alternate" hreflang="en" href="https://jash90.github.io/mr-jira-menubar/en/">
+  <link rel="alternate" hreflang="x-default" href="https://jash90.github.io/mr-jira-menubar/">
+  <meta name="theme-color" content="#4a3df0">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MR Jira Menu Bar">
+  <meta property="og:locale" content="pl_PL">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:title" content="MR Jira Menu Bar — Twoja praca na pasku menu macOS">
+  <meta property="og:description" content="Liczniki merge requestów z GitLaba, pull requestów z GitHuba i zadań z Jiry — zawsze widoczne, odświeżane co 5 minut.">
+  <meta property="og:url" content="https://jash90.github.io/mr-jira-menubar/">
+  <meta property="og:image" content="https://jash90.github.io/mr-jira-menubar/assets/og-pl.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Ikona MR Jira Menu Bar obok otwartego menu z licznikami GitLaba, GitHuba i Jiry">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="assets/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Przejdź do treści</a>
+
+  <header class="site-header">
+    <nav class="container nav" aria-label="Główna nawigacja">
+      <a class="brand" href="./">
+        <img src="assets/favicon.png" alt="" width="32" height="32">
+        <span>MR Jira Menu Bar</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#funkcje">Funkcje</a></li>
+        <li><a href="#jak-to-dziala">Jak to działa</a></li>
+        <li><a href="#galeria">Galeria</a></li>
+        <li><a href="#dla-developerow">Dla developerów</a></li>
+      </ul>
+      <a class="lang-switch" href="en/" hreflang="en" lang="en">
+        <span aria-hidden="true">EN</span><span class="visually-hidden">Read this page in English</span>
+      </a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">Aplikacja na pasek menu macOS</span>
+          <h1 id="hero-title">Twoje MR-y, PR-y i zadania z Jiry. <span class="grad">Zawsze na wierzchu.</span></h1>
+          <p class="lead">MR Jira Menu Bar pokazuje na pasku menu, ile masz otwartych merge requestów, ile z nich czeka już na merge i co dzieje się z Twoimi zadaniami w Jirze — bez przełączania się do przeglądarki.</p>
+          <div class="cta">
+            <a class="btn btn-primary" href="https://github.com/jash90/mr-jira-menubar/releases/latest">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m0 0 5-5m-5 5-5-5M4 19h16"/></svg>
+              Pobierz dla macOS
+            </a>
+            <a class="btn btn-ghost" href="https://github.com/jash90/mr-jira-menubar">Kod źródłowy na GitHubie</a>
+          </div>
+          <p class="meta">Darmowa, open source · macOS 13 Ventura lub nowszy · plik DMG</p>
+        </div>
+        <div class="hero-shot">
+          <img src="assets/screenshots/hero.webp" width="665" height="530"
+               alt="Pasek menu macOS z licznikami aplikacji i rozwiniętym menu: GitLab — 4 otwarte MR, 2 gotowe do mergu; GitHub — 3 otwarte PR, 1 approved; Jira — backlog 7, w toku 2, w testach 3, zaakceptowane 12, odrzucone 1.">
+        </div>
+      </div>
+    </section>
+
+    <section class="section-soft" aria-labelledby="problem-title">
+      <div class="container">
+        <div class="section-intro">
+          <h2 id="problem-title">Status pracy rozrzucony po trzech kartach przeglądarki</h2>
+          <p>Kod leży w GitLabie albo na GitHubie, zadania w Jirze. Żeby sprawdzić, czy coś już można zmergować albo czy tester odbił zadanie, trzeba otworzyć kilka zakładek i przeklikać filtry.</p>
+        </div>
+        <div class="problem-grid">
+          <div class="card">
+            <h3>Review, które czeka</h3>
+            <p>Merge request dostał już dwa approve, a Ty nie wiesz o tym, dopóki sam nie zajrzysz do GitLaba.</p>
+          </div>
+          <div class="card">
+            <h3>Zadania, które wracają</h3>
+            <p>Tester przeniósł zadanie z powrotem do „In Progress”. Łatwo to przegapić, a potem trudno policzyć, ile razy się zdarzyło.</p>
+          </div>
+          <div class="card">
+            <h3>Ciągłe przełączanie kontekstu</h3>
+            <p>Każde „tylko sprawdzę” to wyjście z edytora. Liczby na pasku menu odpowiadają na to pytanie jednym spojrzeniem.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="funkcje" aria-labelledby="features-title">
+      <div class="container">
+        <div class="section-intro">
+          <h2 id="features-title">Co potrafi</h2>
+          <p>Aplikacja działa w tle, bez ikony w Docku. Co 5 minut pobiera liczniki z włączonych źródeł i pokazuje je na pasku menu.</p>
+        </div>
+
+        <article class="feature">
+          <div>
+            <h3>Liczniki prosto na pasku menu</h3>
+            <p>Każdy licznik ma własną ikonę. Najedź kursorem, a zobaczysz podsumowanie w jednej linijce. Do wyboru:</p>
+            <ul>
+              <li><strong>GitLab</strong> — Twoje otwarte merge requesty i te gotowe do mergu (co najmniej 2 approve).</li>
+              <li><strong>GitHub</strong> — Twoje otwarte pull requesty i te z approve.</li>
+              <li><strong>Jira</strong> — backlog („To Do” / „Backlog”), zadania w toku, czekające w testach, zaakceptowane i odrzucone.</li>
+            </ul>
+          </div>
+          <div class="feature-media">
+            <div class="frame">
+              <img class="bar-shot" src="assets/screenshots/menubar.webp" width="325" height="30" loading="lazy"
+                   alt="Liczniki na pasku menu: 4 otwarte MR, 2 gotowe do mergu, 3 otwarte PR, 1 approved, backlog 7, w toku 2, w testach 3, zaakceptowane 12, odrzucone 1.">
+            </div>
+          </div>
+        </article>
+
+        <article class="feature">
+          <div>
+            <h3>Jedno kliknięcie do właściwej listy</h3>
+            <p>Kliknięcie ikony rozwija menu z rozbiciem na źródła. Każda pozycja otwiera w przeglądarce odpowiedni widok: panel Twoich merge requestów w GitLabie, wyszukiwanie PR-ów na GitHubie albo gotowy filtr JQL w Jirze.</p>
+            <p>W menu widać też godzinę ostatniego odświeżenia. Skrót <kbd>⌘</kbd> <kbd>R</kbd> odświeża dane od razu.</p>
+          </div>
+          <div class="feature-media">
+            <div class="frame">
+              <img src="assets/screenshots/menu.webp" width="351" height="473" loading="lazy"
+                   alt="Rozwinięte menu aplikacji z sekcjami GitLab — moje MR, GitHub — moje PR i Jira, godziną ostatniego odświeżenia oraz pozycjami Odśwież teraz, Ustawienia i Zakończ.">
+            </div>
+          </div>
+        </article>
+
+        <article class="feature">
+          <div>
+            <h3>Licznik odrzuceń, który nie znika</h3>
+            <p>„Odrzucone” liczy każde zadanie, które kiedykolwiek wróciło z testów do poprawki — także jeśli później zostało zaakceptowane. Zadanie liczy się, gdy:</p>
+            <ul>
+              <li>to Ty przeniosłeś je do statusu „Internal testing”,</li>
+              <li>następną zmianą statusu był powrót do „In Progress” wykonany przez kogoś innego,</li>
+              <li>przy włączonym GitLabie: istnieje Twój merge request z kluczem zadania, utworzony przed tym powrotem.</li>
+            </ul>
+            <p class="note">Nazwy statusów („To Do”, „Backlog”, „In Progress”, „Code review”, „Internal testing”) są wpisane w kod — aplikacja zakłada taki workflow w Jirze.</p>
+          </div>
+          <div class="feature-media">
+            <div class="frame">
+              <img class="bar-shot" src="assets/screenshots/menubar-compact.webp" width="161" height="30" loading="lazy"
+                   alt="Skrócony pasek menu z czterema licznikami: 4 otwarte MR, 2 gotowe do mergu, 2 zadania w toku, 1 odrzucone.">
+            </div>
+          </div>
+        </article>
+
+        <article class="feature">
+          <div>
+            <h3>Pokazujesz tylko to, czego potrzebujesz</h3>
+            <p>W ustawieniach podajesz host i token dla każdego źródła. GitLab i GitHub możesz wyłączyć jednym przełącznikiem, a każdy z dziewięciu liczników osobno ukryć z paska — w menu nadal będzie widoczny.</p>
+            <ul>
+              <li>Działa z własną instancją GitLaba, GitHub.com i GitHub Enterprise oraz Jirą w wersji Server / Data Center (token PAT).</li>
+              <li>Tokeny trafiają do pęku kluczy macOS (Keychain), zapisane w jednym zaszyfrowanym wpisie.</li>
+              <li>Opcja „Uruchamiaj przy starcie systemu”.</li>
+            </ul>
+          </div>
+          <div class="feature-media">
+            <div class="frame">
+              <picture>
+                <source srcset="assets/screenshots/settings-dark.webp" media="(prefers-color-scheme: dark)">
+                <img src="assets/screenshots/settings-light.webp" width="552" height="1027" loading="lazy" style="max-height: 560px; width: auto;"
+                     alt="Okno ustawień z sekcjami Ogólne, GitLab, Jira, GitHub i Liczniki na pasku. Hosty gitlab.example.com i jira.example.com, tokeny ukryte.">
+              </picture>
+            </div>
+          </div>
+        </article>
+
+        <article class="feature">
+          <div>
+            <h3>Od razu widzisz, gdy coś nie działa</h3>
+            <p>Jeśli źródło jest skonfigurowane, ale połączenie się nie udało, jego liczniki na pasku zmieniają się w czerwony symbol ostrzeżenia, a na górze menu pojawia się komunikat. Wygasły token rozpoznasz po czytelnym opisie błędu 401.</p>
+            <p>Pozostałe źródła działają dalej — awaria jednego nie blokuje reszty.</p>
+          </div>
+          <div class="feature-media">
+            <div class="frame">
+              <img class="bar-shot" src="assets/screenshots/menubar-error.webp" width="334" height="30" loading="lazy"
+                   alt="Pasek menu, na którym liczniki GitLaba zastąpiono czerwonymi symbolami ostrzeżenia z kreską.">
+              <img src="assets/screenshots/menu-error.webp" width="479" height="546" loading="lazy"
+                   alt="Menu z czerwonym komunikatem „Nie udało się połączyć (mimo konfiguracji)” i błędem „GitLab 401 — token wygasł lub został zmieniony”.">
+            </div>
+          </div>
+        </article>
+
+        <article class="feature">
+          <div>
+            <h3>Aktualizacje bez szukania</h3>
+            <p>Co 6 godzin aplikacja sprawdza najnowsze wydanie na GitHubie. Gdy pojawi się nowsza wersja, w menu zobaczysz pozycję „Nowa wersja … — pobierz”, która ściąga plik DMG do folderu Pobrane i od razu go otwiera.</p>
+          </div>
+          <div class="feature-media">
+            <div class="frame">
+              <img src="assets/screenshots/menu-update.webp" width="351" height="508" loading="lazy"
+                   alt="Menu z dodatkową pozycją na górze: „Nowa wersja 1.5.0 — pobierz” z ikoną strzałki w dół.">
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="jak-to-dziala" class="section-soft" aria-labelledby="how-title">
+      <div class="container">
+        <div class="section-intro">
+          <h2 id="how-title">Jak to działa</h2>
+          <p>Trzy kroki od pobrania do pierwszych liczników.</p>
+        </div>
+        <ol class="steps">
+          <li class="card">
+            <span class="num" aria-hidden="true">1</span>
+            <h3>Zainstaluj</h3>
+            <p>Pobierz plik DMG z <a href="https://github.com/jash90/mr-jira-menubar/releases/latest">najnowszego wydania</a> i przeciągnij aplikację do folderu Aplikacje.</p>
+          </li>
+          <li class="card">
+            <span class="num" aria-hidden="true">2</span>
+            <h3>Podaj hosty i tokeny</h3>
+            <p>Przy pierwszym uruchomieniu na pasku pojawia się ikona zębatki i otwierają się ustawienia. Uzupełnij dane przynajmniej jednego źródła i kliknij „Zapisz”.</p>
+          </li>
+          <li class="card">
+            <span class="num" aria-hidden="true">3</span>
+            <h3>Zerkaj na pasek</h3>
+            <p>Liczniki odświeżają się co 5 minut. Kliknij ikonę, żeby zobaczyć szczegóły albo przejść do listy w GitLabie, na GitHubie lub w Jirze.</p>
+          </li>
+        </ol>
+        <p class="note" style="margin-top:1.5rem">Wydania są podpisane certyfikatem Developer ID. Jeśli dany build nie przeszedł notaryzacji, przy pierwszym uruchomieniu kliknij aplikację prawym przyciskiem i wybierz „Otwórz”.</p>
+      </div>
+    </section>
+
+    <section id="galeria" aria-labelledby="gallery-title">
+      <div class="container">
+        <div class="section-intro">
+          <h2 id="gallery-title">Galeria</h2>
+          <p>Zrzuty z działającej aplikacji, wypełnionej przykładowymi danymi. Kliknij, aby powiększyć.</p>
+        </div>
+        <ul class="gallery">
+          <li><a href="assets/screenshots/hero.webp" data-lightbox>
+            <span class="thumb"><img src="assets/screenshots/hero.webp" width="665" height="530" loading="lazy" alt="Pasek menu z licznikami i rozwiniętym menu aplikacji."></span>
+            <span class="cap">Liczniki i rozwinięte menu</span></a></li>
+          <li><a href="assets/screenshots/menu.webp" data-lightbox>
+            <span class="thumb"><img src="assets/screenshots/menu.webp" width="351" height="473" loading="lazy" alt="Menu z rozbiciem na GitLab, GitHub i Jirę."></span>
+            <span class="cap">Menu z rozbiciem na źródła</span></a></li>
+          <li><a href="assets/screenshots/settings-light.webp" data-lightbox>
+            <span class="thumb"><img src="assets/screenshots/settings-light.webp" width="552" height="1027" loading="lazy" alt="Okno ustawień aplikacji w jasnym motywie."></span>
+            <span class="cap">Ustawienia (jasny motyw)</span></a></li>
+          <li><a href="assets/screenshots/settings-dark.webp" data-lightbox>
+            <span class="thumb"><img src="assets/screenshots/settings-dark.webp" width="552" height="1027" loading="lazy" alt="Okno ustawień aplikacji w ciemnym motywie."></span>
+            <span class="cap">Ustawienia (ciemny motyw)</span></a></li>
+          <li><a href="assets/screenshots/menu-error.webp" data-lightbox>
+            <span class="thumb"><img src="assets/screenshots/menu-error.webp" width="479" height="546" loading="lazy" alt="Menu z komunikatem o nieudanym połączeniu z GitLabem."></span>
+            <span class="cap">Błąd połączenia z GitLabem</span></a></li>
+          <li><a href="assets/screenshots/menu-update.webp" data-lightbox>
+            <span class="thumb"><img src="assets/screenshots/menu-update.webp" width="351" height="508" loading="lazy" alt="Menu z informacją o nowej wersji do pobrania."></span>
+            <span class="cap">Dostępna nowa wersja</span></a></li>
+          <li><a href="assets/screenshots/needs-config.webp" data-lightbox>
+            <span class="thumb"><img src="assets/screenshots/needs-config.webp" width="364" height="139" loading="lazy" alt="Menu przed konfiguracją: „Brak konfiguracji — uzupełnij tokeny”."></span>
+            <span class="cap">Pierwsze uruchomienie, przed konfiguracją</span></a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="dla-developerow" class="section-soft" aria-labelledby="dev-title">
+      <div class="container">
+        <div class="section-intro">
+          <h2 id="dev-title">Dla developerów</h2>
+          <p>Natywna aplikacja w Swifcie, bez zewnętrznych zależności. Logika jest oddzielona od interfejsu i pokryta testami jednostkowymi.</p>
+        </div>
+        <ul class="pill-list" aria-label="Technologie">
+          <li>Swift 5.9</li><li>AppKit (NSStatusItem)</li><li>SwiftUI</li><li>Swift Package Manager</li>
+          <li>CryptoKit</li><li>ServiceManagement</li><li>XCTest</li><li>GitHub Actions</li>
+        </ul>
+        <div class="tech-grid">
+          <div class="card">
+            <h3>Uruchomienie lokalne</h3>
+            <p>Wymagany macOS 13+ i Xcode (Swift 5.9+).</p>
+<pre><code>git clone https://github.com/jash90/mr-jira-menubar.git
+cd mr-jira-menubar
+swift run MRJiraMenuBar      # tryb deweloperski
+swift test                   # testy MenuBarCore
+scripts/build-app.sh         # .app + DMG w dist/</code></pre>
+            <p class="note">Aplikacja nie ma zmiennych środowiskowych — hosty i tokeny podajesz w oknie ustawień. Zakończysz ją z menu (<kbd>⌘</kbd> <kbd>Q</kbd>).</p>
+          </div>
+          <div class="card">
+            <h3>Struktura i API</h3>
+            <p><code>Sources/MenuBarCore</code> — logika oparta tylko na Foundation (klienty API, <code>StatusStore</code>, <code>StatusFormatter</code>, ustawienia, aktualizacje). <code>Sources/MRJiraMenuBar</code> — interfejs AppKit/SwiftUI.</p>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th scope="col">Źródło</th><th scope="col">API i autoryzacja</th></tr></thead>
+                <tbody>
+                  <tr><td>GitLab</td><td>REST API v4, nagłówek <code>PRIVATE-TOKEN</code></td></tr>
+                  <tr><td>GitHub</td><td>Search API, token Bearer; dla GitHub Enterprise ścieżka <code>/api/v3</code></td></tr>
+                  <tr><td>Jira</td><td>REST API v2 (wyszukiwanie JQL i changelog), token PAT jako Bearer</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="note">Wydania buduje workflow <code>release.yml</code>: podpis Developer ID, opcjonalna notaryzacja i DMG dołączany do release na GitHubie.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <p>MR Jira Menu Bar · repozytorium nie zawiera pliku licencji (LICENSE).</p>
+      <ul class="footer-links">
+        <li><a href="https://github.com/jash90/mr-jira-menubar">Repozytorium</a></li>
+        <li><a href="https://github.com/jash90/mr-jira-menubar/releases">Wydania</a></li>
+        <li><a href="https://github.com/jash90/mr-jira-menubar/issues">Zgłoś problem</a></li>
+        <li><a href="en/" hreflang="en" lang="en">English</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <dialog class="lightbox" aria-label="Powiększony zrzut ekranu">
+    <button class="close" type="button" aria-label="Zamknij">×</button>
+    <figure><img alt=""><figcaption></figcaption></figure>
+  </dialog>
+</body>
+</html>
