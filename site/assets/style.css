@@ -29,6 +29,8 @@
     --accent: #a898ff;
     --shadow: 0 18px 50px -20px rgba(0, 0, 0, .8);
   }
+  /* Small gradient text fails AA on the dark background; use the solid accent there. */
+  .eyebrow { background: none; color: var(--accent); }
 }
 
 *, *::before, *::after { box-sizing: border-box; }
